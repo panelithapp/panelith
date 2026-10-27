@@ -17,16 +17,21 @@
 
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <Compile Remove="Platform/PlatformSensors.cs" />
+    <!--
+      The reference is for the compiler. The content copy is what a normal build
+      places next to the app. Publish already picks up the reference, so the
+      content copy stays out of the published folder.
+    -->
     <Reference Include="WinRT.Runtime">
       <HintPath>$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\WinRT.Runtime.dll</HintPath>
-      <Private>true</Private>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Microsoft.Windows.SDK.NET">
       <HintPath>$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\Microsoft.Windows.SDK.NET.dll</HintPath>
-      <Private>true</Private>
+      <Private>false</Private>
     </Reference>
-    <Content Include="$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\WinRT.Runtime.dll" Link="WinRT.Runtime.dll" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\Microsoft.Windows.SDK.NET.dll" Link="Microsoft.Windows.SDK.NET.dll" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\WinRT.Runtime.dll" Link="WinRT.Runtime.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
+    <Content Include="$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\Microsoft.Windows.SDK.NET.dll" Link="Microsoft.Windows.SDK.NET.dll" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
   <ItemGroup Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
