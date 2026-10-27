@@ -4,9 +4,9 @@
     "net10.0": {
       "System.CommandLine": {
         "type": "Direct",
-        "requested": "[2.0.13, )",
-        "resolved": "2.0.13",
-        "contentHash": "TIO2lMV+sSP7WW7pD/oCRHD9ENWY+jqwXmYzgks3R46cEdDzwjQOAhsiBn+M3EegfGjgTpa2h+eIrcU+AM2k6A=="
+        "requested": "[2.0.14, )",
+        "resolved": "2.0.14",
+        "contentHash": "15fyVO4aG6poR6IKmhM74zf7PUzaU6FZAGm2d3SQSO9yIyGAeo44e6t9qeKjjaqyMEqYdqcb2G1B0gpLoDU2cA=="
       },
       "BlackSharp.Core": {
         "type": "Transitive",
@@ -185,7 +185,6 @@
           "Panelith.Devices": "[0.1.4, )",
           "Panelith.Engine": "[0.1.4, )",
           "Panelith.Monitoring": "[0.1.4, )",
-          "Panelith.Platform.Windows": "[0.1.4, )",
           "Panelith.Rendering": "[0.1.4, )"
         }
       },
@@ -197,15 +196,13 @@
           "Panelith.Core": "[0.1.4, )"
         }
       },
-      "panelith.platform.windows": {
-        "type": "Project"
-      },
       "panelith.rendering": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
           "Panelith.Core": "[0.1.4, )",
-          "SkiaSharp": "[4.153.1, )"
+          "SkiaSharp": "[4.153.1, )",
+          "SkiaSharp.NativeAssets.Linux.NoDependencies": "[4.153.1, )"
         }
       },
       "HidSharp": {
@@ -253,6 +250,12 @@
           "SkiaSharp.NativeAssets.Win32": "4.153.1",
           "SkiaSharp.NativeAssets.macOS": "4.153.1"
         }
+      },
+      "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+        "type": "CentralTransitive",
+        "requested": "[4.153.1, )",
+        "resolved": "4.153.1",
+        "contentHash": "NrnPjcxjcRau4GMOY0BTpUdMey+MnmLU3jC5AuExEFHPS2NkX1tdkXW0n/c5nQMMHBTAMpHnt7qEOpXs2FNfIQ=="
       },
       "SkiaSharp.NativeAssets.macOS": {
         "type": "CentralTransitive",
@@ -389,6 +392,12 @@
           "System.IO.Ports": "10.0.3",
           "System.Management": "10.0.2"
         }
+      },
+      "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+        "type": "CentralTransitive",
+        "requested": "[4.153.1, )",
+        "resolved": "4.153.1",
+        "contentHash": "NrnPjcxjcRau4GMOY0BTpUdMey+MnmLU3jC5AuExEFHPS2NkX1tdkXW0n/c5nQMMHBTAMpHnt7qEOpXs2FNfIQ=="
       },
       "SkiaSharp.NativeAssets.macOS": {
         "type": "CentralTransitive",
