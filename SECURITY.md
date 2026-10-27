@@ -6,7 +6,7 @@ Only the latest release receives fixes. Installed copies update themselves unles
 
 ## Reporting a vulnerability
 
-Please do not open a public issue. Report it privately through [GitHub's private vulnerability reporting](https://github.com/bharry29/panelith/security/advisories/new), or by email to bharry29@gmail.com with "Panelith security" in the subject.
+Please do not open a public issue. Report it privately through [GitHub's private vulnerability reporting](https://github.com/panelithapp/panelith/security/advisories/new), or by email to bharry29@gmail.com with "Panelith security" in the subject.
 
 Include the Panelith version, what an attacker could do, and steps to reproduce. You can expect a reply within a week. Once a fix is released, you will be credited in the release notes unless you prefer not to be.
 

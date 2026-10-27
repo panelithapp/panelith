@@ -10,7 +10,7 @@ Windows "N" editions lack the Media Foundation video components. The installer a
 
 ## Download and install
 
-1. Open the [latest release](https://github.com/bharry29/panelith/releases/latest) and download `Panelith-<version>-setup.exe`.
+1. Open the [latest release](https://github.com/panelithapp/panelith/releases/latest) and download `Panelith-<version>-setup.exe`.
 2. Quit Thermalright TRCC, or whatever software came with your panel, including from the notification area. Only one program can use the panel at a time.
 3. Run the installer and accept the Windows permission prompt. Panelith installs to `C:\Program Files\Panelith`.
 4. On the **Select additional tasks** page you can:

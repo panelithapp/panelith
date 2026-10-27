@@ -19,7 +19,7 @@ Every release is signed twice:
 - The **update feed and the installer** are signed with an Ed25519 key that only the publisher holds. Panelith contains the matching public key and refuses a feed or installer whose signature does not match. This holds even if the download server or the connection were tampered with.
 - The **installer and Panelith's program files** are Authenticode-signed by **Bharath Vadlamannati**, with a timestamp. See [Installing](installing.md#windows-says-the-publisher-is-unknown) about the certificate.
 
-Updates are fetched over HTTPS from `github.com/bharry29/panelith`.
+Updates are fetched over HTTPS from `github.com/panelithapp/panelith`.
 
 ## Which copies update
 
@@ -29,4 +29,4 @@ Panelith 0.1.0 is the first version with in-app updates. Copies installed before
 
 ## If an update fails
 
-Panelith keeps running the version you have. The reason is shown in **Settings > Updates** and in the log. You can always download the newest installer from the [releases page](https://github.com/bharry29/panelith/releases/latest) and run it over your installation.
+Panelith keeps running the version you have. The reason is shown in **Settings > Updates** and in the log. You can always download the newest installer from the [releases page](https://github.com/panelithapp/panelith/releases/latest) and run it over your installation.

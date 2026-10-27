@@ -77,8 +77,8 @@ The first public release.
 
 - Panelith is now licensed under the PolyForm Noncommercial License 1.0.0. Earlier, unreleased versions were Apache-2.0.
 
-[0.1.4]: https://github.com/bharry29/panelith/releases/tag/v0.1.4
-[0.1.3]: https://github.com/bharry29/panelith/releases/tag/v0.1.3
-[0.1.2]: https://github.com/bharry29/panelith/releases/tag/v0.1.2
-[0.1.1]: https://github.com/bharry29/panelith/releases/tag/v0.1.1
-[0.1.0]: https://github.com/bharry29/panelith/releases/tag/v0.1.0
+[0.1.4]: https://github.com/panelithapp/panelith/releases/tag/v0.1.4
+[0.1.3]: https://github.com/panelithapp/panelith/releases/tag/v0.1.3
+[0.1.2]: https://github.com/panelithapp/panelith/releases/tag/v0.1.2
+[0.1.1]: https://github.com/panelithapp/panelith/releases/tag/v0.1.1
+[0.1.0]: https://github.com/panelithapp/panelith/releases/tag/v0.1.0

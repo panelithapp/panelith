@@ -7,7 +7,7 @@ Thank you for helping. Panelith is licensed under the [PolyForm Noncommercial Li
 
 ## Reporting bugs and asking for features
 
-Use the [issue forms](https://github.com/bharry29/panelith/issues/new/choose). For bugs, the version, the panel, and a log file from `%APPDATA%\Panelith\logs` make the difference. Report security problems privately: see [SECURITY.md](../SECURITY.md).
+Use the [issue forms](https://github.com/panelithapp/panelith/issues/new/choose). For bugs, the version, the panel, and a log file from `%APPDATA%\Panelith\logs` make the difference. Report security problems privately: see [SECURITY.md](../SECURITY.md).
 
 ## Adding a panel
 

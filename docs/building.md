@@ -9,7 +9,7 @@
 ## Build and test
 
 ```powershell
-git clone https://github.com/bharry29/panelith.git
+git clone https://github.com/panelithapp/panelith.git
 cd panelith
 dotnet build Panelith.slnx
 dotnet test Panelith.slnx

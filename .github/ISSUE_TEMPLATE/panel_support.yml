@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        See [Device support](https://github.com/bharry29/panelith/blob/main/docs/device-support.md) for what is supported, and [Adding a panel](https://github.com/bharry29/panelith/blob/main/docs/contributing.md#adding-a-panel) for what helps most.
+        See [Device support](https://github.com/panelithapp/panelith/blob/main/docs/device-support.md) for what is supported, and [Adding a panel](https://github.com/panelithapp/panelith/blob/main/docs/contributing.md#adding-a-panel) for what helps most.
   - type: input
     id: model
     attributes:

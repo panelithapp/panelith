@@ -19,8 +19,8 @@
     <Authors>Bharath Vadlamannati</Authors>
     <Copyright>Copyright (c) 2026 Bharath Vadlamannati</Copyright>
     <PackageLicenseExpression>PolyForm-Noncommercial-1.0.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/bharry29/panelith</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/bharry29/panelith</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/panelithapp/panelith</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/panelithapp/panelith</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <VersionPrefix>0.1.4</VersionPrefix>
   </PropertyGroup>

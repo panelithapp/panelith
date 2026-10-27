@@ -1,6 +1,6 @@
 # Panelith user guide
 
-Panelith draws live screens on USB sensor panels such as the Thermalright Trofeo Vision. These pages explain how to install it, use every part of the app, and fix things when they go wrong. The same pages are published on the [wiki](https://github.com/bharry29/panelith/wiki).
+Panelith draws live screens on USB sensor panels such as the Thermalright Trofeo Vision. These pages explain how to install it, use every part of the app, and fix things when they go wrong. The same pages are published on the [wiki](https://github.com/panelithapp/panelith/wiki).
 
 ## Using Panelith
 

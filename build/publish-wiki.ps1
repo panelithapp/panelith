@@ -19,15 +19,15 @@
 #>
 [CmdletBinding()]
 param(
-    [string] $Remote = 'https://github.com/bharry29/panelith.wiki.git',
+    [string] $Remote = 'https://github.com/panelithapp/panelith.wiki.git',
     [switch] $DryRun
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $docs = Join-Path $root 'docs'
-$blob = 'https://github.com/bharry29/panelith/blob/main'
-$raw = 'https://raw.githubusercontent.com/bharry29/panelith/main'
+$blob = 'https://github.com/panelithapp/panelith/blob/main'
+$raw = 'https://raw.githubusercontent.com/panelithapp/panelith/main'
 
 $work = Join-Path ([IO.Path]::GetTempPath()) "panelith-wiki-$([guid]::NewGuid().ToString('N'))"
 if ($DryRun) {
@@ -35,7 +35,7 @@ if ($DryRun) {
 } else {
     & git clone --quiet $Remote $work
     if ($LASTEXITCODE -ne 0) {
-        throw "Could not clone $Remote. If the wiki is new, save a first page at https://github.com/bharry29/panelith/wiki first."
+        throw "Could not clone $Remote. If the wiki is new, save a first page at https://github.com/panelithapp/panelith/wiki first."
     }
     Get-ChildItem $work -Filter *.md | Remove-Item
 }
@@ -99,7 +99,7 @@ try {
     & git commit --quiet -m "Update from docs at $commit"
     & git push --quiet origin HEAD
     if ($LASTEXITCODE -ne 0) { throw 'Pushing the wiki failed.' }
-    Write-Host 'Wiki updated: https://github.com/bharry29/panelith/wiki'
+    Write-Host 'Wiki updated: https://github.com/panelithapp/panelith/wiki'
 } finally {
     Pop-Location
     Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue

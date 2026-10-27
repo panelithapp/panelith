@@ -50,7 +50,7 @@ The window shows the reason. The most common cause is damaged settings: Panelith
 
 ## Reporting a problem
 
-[Open an issue](https://github.com/bharry29/panelith/issues/new/choose) and include:
+[Open an issue](https://github.com/panelithapp/panelith/issues/new/choose) and include:
 
 - the Panelith version (bottom of **Settings**) and your Windows version;
 - the panel model, and the line about it from `panelith devices` if you can;

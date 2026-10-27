@@ -13,7 +13,7 @@
        the appcast, SHA256SUMS.txt and the public signing certificate.
 
     Installed copies read
-    https://github.com/bharry29/panelith/releases/latest/download/appcast.xml,
+    https://github.com/panelithapp/panelith/releases/latest/download/appcast.xml,
     so publishing a release is all it takes for them to be offered the update.
 
     Needs, outside the repository:
@@ -36,7 +36,7 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $root = Split-Path -Parent $PSScriptRoot
-$repository = 'bharry29/panelith'
+$repository = 'panelithapp/panelith'
 $releaseDir = Join-Path $root 'artifacts\release'
 $keys = if ($env:PANELITH_UPDATE_KEYS) { $env:PANELITH_UPDATE_KEYS } else { Join-Path $env:LOCALAPPDATA 'Panelith Release\update-keys' }
 

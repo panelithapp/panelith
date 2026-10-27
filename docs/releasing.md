@@ -49,10 +49,10 @@ The script stops at the first problem. It checks that `main` is clean, pushed an
 | `SHA256SUMS.txt` | Hashes of every asset |
 | `Panelith-code-signing.cer` | The public signing certificate, for people who want to check or trust it |
 
-Afterwards, run `./build/publish-wiki.ps1` so the [wiki](https://github.com/bharry29/panelith/wiki) matches `docs/`. The wiki is generated, so edit `docs/` rather than the wiki.
+Afterwards, run `./build/publish-wiki.ps1` so the [wiki](https://github.com/panelithapp/panelith/wiki) matches `docs/`. The wiki is generated, so edit `docs/` rather than the wiki.
 
 Use `-Draft` to publish a draft first. Installed copies read `releases/latest`, which ignores drafts and pre-releases, so a draft is safe to inspect; publishing it makes it live.
 
 ## How installed copies find a release
 
-The app reads `https://github.com/bharry29/panelith/releases/latest/download/appcast.xml`, verifies `appcast.xml.signature` with the built-in public key, and offers the version in it if it is newer. The installer download is verified against the Ed25519 signature in the feed before it runs. It is started with `/SILENT /SUPPRESSMSGBOXES /NORESTART /RELAUNCH=1`, and `/RELAUNCH=1` makes the installer start Panelith again afterwards, through the elevated start-up task when there is one.
+The app reads `https://github.com/panelithapp/panelith/releases/latest/download/appcast.xml`, verifies `appcast.xml.signature` with the built-in public key, and offers the version in it if it is newer. The installer download is verified against the Ed25519 signature in the feed before it runs. It is started with `/SILENT /SUPPRESSMSGBOXES /NORESTART /RELAUNCH=1`, and `/RELAUNCH=1` makes the installer start Panelith again afterwards, through the elevated start-up task when there is one.

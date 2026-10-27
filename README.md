@@ -10,10 +10,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/bharry29/panelith/releases/latest"><b>Download for Windows</b></a> ·
+  <a href="https://github.com/panelithapp/panelith/releases/latest"><b>Download for Windows</b></a> ·
   <a href="docs/getting-started.md">Getting started</a> ·
   <a href="docs/README.md">User guide</a> ·
-  <a href="https://github.com/bharry29/panelith/wiki">Wiki</a> ·
+  <a href="https://github.com/panelithapp/panelith/wiki">Wiki</a> ·
   <a href="CHANGELOG.md">What's new</a>
 </p>
 
@@ -50,7 +50,7 @@ See all of them in [Screens](docs/screens.md).
 
 ## Install
 
-1. Download `Panelith-<version>-setup.exe` from the [latest release](https://github.com/bharry29/panelith/releases/latest).
+1. Download `Panelith-<version>-setup.exe` from the [latest release](https://github.com/panelithapp/panelith/releases/latest).
 2. Close Thermalright TRCC or any other panel software. Only one program can talk to the panel at a time.
 3. Run the installer. Windows may warn that the publisher is not recognised; see [Installing](docs/installing.md#windows-says-the-publisher-is-unknown) for why and how to check the download.
 4. Panelith opens, finds the panel and puts a screen on it.
@@ -72,7 +72,7 @@ The full list, with what "tested" means, is in [Device support](docs/device-supp
 
 ## Documentation
 
-The [user guide](docs/README.md) covers everything, and the same pages are on the [wiki](https://github.com/bharry29/panelith/wiki):
+The [user guide](docs/README.md) covers everything, and the same pages are on the [wiki](https://github.com/panelithapp/panelith/wiki):
 
 - [Installing](docs/installing.md) and [Getting started](docs/getting-started.md)
 - [Screens](docs/screens.md), [Video screens](docs/video-screens.md), [Designer](docs/designer.md) and [Profiles](docs/profiles.md)

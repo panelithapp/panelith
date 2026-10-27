@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: User guide
-    url: https://github.com/bharry29/panelith/blob/main/docs/README.md
+    url: https://github.com/panelithapp/panelith/blob/main/docs/README.md
     about: How to install and use Panelith, and fixes for common problems.
   - name: Report a security problem
-    url: https://github.com/bharry29/panelith/security/advisories/new
+    url: https://github.com/panelithapp/panelith/security/advisories/new
     about: Please report vulnerabilities privately.

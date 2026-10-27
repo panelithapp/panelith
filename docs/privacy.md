@@ -6,7 +6,7 @@ Panelith has no accounts, no analytics, no telemetry and no advertising. It does
 
 | When | Where | What is sent |
 | --- | --- | --- |
-| Checking for updates (a minute after start-up and every six hours, unless turned off; or **Check now**) | `github.com/bharry29/panelith` releases | An ordinary HTTPS request for the update feed. GitHub sees your IP address, as with any download. |
+| Checking for updates (a minute after start-up and every six hours, unless turned off; or **Check now**) | `github.com/panelithapp/panelith` releases | An ordinary HTTPS request for the update feed. GitHub sees your IP address, as with any download. |
 | Installing an update you chose | The same GitHub release | A download of the installer. |
 | Making a screen from a YouTube link you entered | YouTube, through the bundled yt-dlp | The requests needed to download that one video. |
 | **Update downloader**, when you choose it after a failed YouTube download | `github.com/yt-dlp/yt-dlp` | A download of the newest yt-dlp. |

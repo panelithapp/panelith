@@ -23,7 +23,7 @@ namespace Panelith.App.Services;
 public sealed partial class UpdateService : ObservableObject, IDisposable
 {
     /// <summary>The signed appcast published with every GitHub release.</summary>
-    public const string AppcastUrl = "https://github.com/bharry29/panelith/releases/latest/download/appcast.xml";
+    public const string AppcastUrl = "https://github.com/panelithapp/panelith/releases/latest/download/appcast.xml";
 
     /// <summary>The key release builds sign the appcast and installers with. Rotating it strands older installs.</summary>
     private const string PublicKey = "8yKZfMbW4dFvM6oNzqkGC1Wqxs6Gax3somUOJp4CFO8=";
@@ -130,8 +130,8 @@ public sealed partial class UpdateService : ObservableObject, IDisposable
     public string? AvailableVersion => Available?.Version;
 
     public string ReleaseNotesUrl => Available is { } item
-        ? $"https://github.com/bharry29/panelith/releases/tag/v{item.Version}"
-        : "https://github.com/bharry29/panelith/releases/latest";
+        ? $"https://github.com/panelithapp/panelith/releases/tag/v{item.Version}"
+        : "https://github.com/panelithapp/panelith/releases/latest";
 
     partial void OnCheckAutomaticallyChanged(bool value)
     {
