@@ -386,7 +386,7 @@
         "dependencies": {
           "HidSharp": "[2.6.4, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "System.IO.Ports": "[10.0.13, )"
         }
       },
@@ -394,25 +394,24 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
-          "Panelith.Devices": "[0.1.4, )"
+          "Panelith.Core": "[0.1.5, )",
+          "Panelith.Devices": "[0.1.5, )"
         }
       },
       "panelith.hosting": {
         "type": "Project",
         "dependencies": {
-          "Panelith.Devices": "[0.1.4, )",
-          "Panelith.Engine": "[0.1.4, )",
-          "Panelith.Monitoring": "[0.1.4, )",
-          "Panelith.Platform.Windows": "[0.1.4, )",
-          "Panelith.Rendering": "[0.1.4, )"
+          "Panelith.Devices": "[0.1.5, )",
+          "Panelith.Engine": "[0.1.5, )",
+          "Panelith.Monitoring": "[0.1.5, )",
+          "Panelith.Rendering": "[0.1.5, )"
         }
       },
       "panelith.media": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "SkiaSharp": "[4.153.1, )",
           "Vortice.MediaFoundation": "[3.8.3, )"
         }
@@ -422,17 +421,14 @@
         "dependencies": {
           "LibreHardwareMonitorLib": "[0.9.6, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )"
+          "Panelith.Core": "[0.1.5, )"
         }
-      },
-      "panelith.platform.windows": {
-        "type": "Project"
       },
       "panelith.rendering": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "SkiaSharp": "[4.153.1, )"
         }
       },

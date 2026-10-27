@@ -167,7 +167,7 @@
         "dependencies": {
           "HidSharp": "[2.6.4, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "System.IO.Ports": "[10.0.13, )"
         }
       },
@@ -175,8 +175,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
-          "Panelith.Devices": "[0.1.4, )"
+          "Panelith.Core": "[0.1.5, )",
+          "Panelith.Devices": "[0.1.5, )"
         }
       },
       "panelith.monitoring": {
@@ -184,14 +184,14 @@
         "dependencies": {
           "LibreHardwareMonitorLib": "[0.9.6, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )"
+          "Panelith.Core": "[0.1.5, )"
         }
       },
       "panelith.rendering": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "SkiaSharp": "[4.153.1, )"
         }
       },

@@ -14,8 +14,31 @@
           <TextBox Text="{Binding Text, UpdateSourceTrigger=LostFocus}" IsVisible="{Binding IsLongText}" FontSize="12" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="48" Padding="6,3" />
           <CheckBox IsChecked="{Binding Flag}" IsVisible="{Binding IsFlag}" />
           <ComboBox ItemsSource="{Binding Options}" SelectedItem="{Binding Choice}" IsVisible="{Binding IsChoice}" HorizontalAlignment="Stretch" FontSize="12" />
-          <Border Grid.Column="1" IsVisible="{Binding IsColor}" Width="22" Height="22" CornerRadius="5" Margin="6,0,0,0"
-                  Background="{Binding Swatch}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" />
+          <Button Grid.Column="1" IsVisible="{Binding IsColor}" Width="22" Height="22" Padding="0" Margin="6,0,0,0"
+                  Background="{Binding Swatch}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="5"
+                  ToolTip.Tip="Colours from this screen">
+            <Button.Flyout>
+              <Flyout>
+                <StackPanel Spacing="8">
+                  <ItemsControl ItemsSource="{Binding Palette}">
+                    <ItemsControl.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6" />
+                      </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="vm:SwatchChoice">
+                        <Button Width="22" Height="22" Padding="0" Background="{Binding Brush}"
+                                BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="5"
+                                Tag="{Binding Value}" Click="ApplySwatch" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <TextBlock Classes="faint" FontSize="11" Text="Or type #rrggbb in the box." />
+                </StackPanel>
+              </Flyout>
+            </Button.Flyout>
+          </Button>
         </Grid>
       </Grid>
     </DataTemplate>
@@ -34,13 +57,13 @@
       <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
         <TextBlock Text="{Binding Title}" Classes="h1" VerticalAlignment="Center" MaxWidth="360" TextTrimming="CharacterEllipsis" />
         <ComboBox ItemsSource="{Binding ScreenChoices}" SelectedItem="{Binding OpenScreen}" PlaceholderText="Open a screen..." MinWidth="240" VerticalAlignment="Center" />
-        <Button Classes="ghost" Command="{Binding NewScreenCommand}" Content="New blank screen" VerticalAlignment="Center" />
       </StackPanel>
     </DockPanel>
 
     <!-- Canvas and toolbox -->
     <DockPanel Grid.Row="1" Margin="0,0,16,0">
       <Border DockPanel.Dock="Top" Classes="card" Padding="12,10" Margin="0,0,0,12">
+        <StackPanel Spacing="8">
         <WrapPanel ItemSpacing="6" LineSpacing="6">
           <TextBlock Text="ADD" Classes="label" VerticalAlignment="Center" Margin="0,0,4,0" />
           <Button Classes="ghost small" Content="Text" Command="{Binding AddWidgetCommand}" CommandParameter="Text" />
@@ -52,15 +75,23 @@
           <Button Classes="ghost small" Content="Wallpaper..." Click="SetWallpaper" IsEnabled="{Binding HasDocument}"
                   ToolTip.Tip="Put a picture or video behind the whole screen" />
         </WrapPanel>
+        <WrapPanel ItemSpacing="6" LineSpacing="6">
+          <TextBlock Text="START" Classes="label" VerticalAlignment="Center" Margin="0,0,4,0" />
+          <Button Classes="ghost small" Content="Blank" Command="{Binding NewScreenCommand}" ToolTip.Tip="An empty screen the size of the panel" />
+          <Button Classes="ghost small" Content="Three gauges" Command="{Binding StartLayoutCommand}" CommandParameter="gauges" />
+          <Button Classes="ghost small" Content="Big number" Command="{Binding StartLayoutCommand}" CommandParameter="number" />
+          <Button Classes="ghost small" Content="Clock" Command="{Binding StartLayoutCommand}" CommandParameter="clock" />
+        </WrapPanel>
+        </StackPanel>
       </Border>
       <TextBlock DockPanel.Dock="Bottom" Text="{Binding Status}" Classes="muted" FontSize="12" TextWrapping="Wrap" Margin="0,10,0,0" />
       <TextBlock DockPanel.Dock="Bottom" Classes="faint" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap"
-                 Text="Click a widget to select it. Drag to move, drag the corner to resize (Shift keeps the shape). Arrow keys nudge, Delete removes, Ctrl+D duplicates." />
+                 Text="Drag to move. It snaps to nearby edges; hold Shift to move freely. Drag the corner to resize (Shift keeps the shape). Arrow keys nudge." />
       <Border Background="#000000" CornerRadius="10" Padding="6" VerticalAlignment="Top">
         <Grid>
           <c:DesignCanvas Designer="{Binding}" />
           <StackPanel IsVisible="{Binding !HasDocument}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="6" Margin="0,40">
-            <TextBlock Text="Open a screen above, or start a blank one." HorizontalAlignment="Center" />
+            <TextBlock Text="Start from a layout above, or open a screen." HorizontalAlignment="Center" />
             <TextBlock Text="Screens that come with Panelith are copied when you save, so the originals stay as they were." Classes="muted" FontSize="12" HorizontalAlignment="Center" />
           </StackPanel>
         </Grid>
@@ -91,7 +122,7 @@
               </ListBox.ItemTemplate>
             </ListBox>
             <TextBlock Classes="muted" FontSize="11" Text="Ctrl-click the canvas to select more than one." />
-            <WrapPanel Orientation="Horizontal">
+            <WrapPanel Orientation="Horizontal" IsVisible="{Binding HasSeveral}">
               <Button Classes="ghost small" Content="Left" Command="{Binding AlignCommand}" CommandParameter="Left" ToolTip.Tip="Line the left edges up" />
               <Button Classes="ghost small" Content="Centre" Command="{Binding AlignCommand}" CommandParameter="Center" />
               <Button Classes="ghost small" Content="Right" Command="{Binding AlignCommand}" CommandParameter="Right" />
@@ -111,16 +142,21 @@
           <StackPanel Spacing="4">
             <TextBlock Text="WIDGET" Classes="label" Margin="0,0,0,4" />
             <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
-              <AutoCompleteBox ItemsSource="{Binding SensorAliases}" Text="{Binding SelectedSensor}" PlaceholderText="Sensor, e.g. gpu.temp"
-                               FilterMode="Contains" MaxDropDownHeight="320" FontSize="12" />
-              <Button Grid.Column="1" Classes="ghost small" Margin="6,0,0,0" Command="{Binding InsertSensorCommand}" Content="Use sensor"
-                      ToolTip.Tip="Adds the sensor to the selected text, or makes it the value of the selected bar, gauge or graph" />
+              <AutoCompleteBox ItemsSource="{Binding SensorAliases}" Text="{Binding SelectedSensor}" SelectedItem="{Binding PickedSensor}"
+                               PlaceholderText="Sensor, e.g. gpu.temp" FilterMode="Contains" MaxDropDownHeight="320" FontSize="12" />
+              <Button Grid.Column="1" Classes="ghost small" Margin="6,0,0,0" Command="{Binding InsertSensorCommand}" Content="Use"
+                      ToolTip.Tip="Puts this sensor in the text, or makes it the value of the bar, gauge or graph" />
             </Grid>
             <ItemsControl ItemsSource="{Binding Properties}" ItemTemplate="{StaticResource FieldTemplate}" />
+            <Button Classes="ghost small" HorizontalAlignment="Left" Margin="0,6,0,0" Content="{Binding MoreLabel}"
+                    Command="{Binding ToggleMoreCommand}" IsVisible="{Binding HasMore}" />
+            <ItemsControl ItemsSource="{Binding MoreProperties}" ItemTemplate="{StaticResource FieldTemplate}" IsVisible="{Binding ShowMore}" />
           </StackPanel>
         </Border>
 
-        <Border Classes="card" Padding="14">
+        <Button Classes="ghost" HorizontalAlignment="Left" Content="Screen" Command="{Binding ToggleScreenSettingsCommand}"
+                ToolTip.Tip="Name, background and colours" />
+        <Border Classes="card" Padding="14" IsVisible="{Binding ShowScreenSettings}">
           <StackPanel Spacing="4">
             <DockPanel Margin="0,0,0,4">
               <Button DockPanel.Dock="Right" Classes="ghost small" Content="Match panel" Command="{Binding MatchPanelCommand}" ToolTip.Tip="Make the canvas the connected panel's size" />

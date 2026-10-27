@@ -280,7 +280,7 @@
       "panelith": {
         "type": "Project",
         "dependencies": {
-          "Panelith.Hosting": "[0.1.4, )",
+          "Panelith.Hosting": "[0.1.5, )",
           "System.CommandLine": "[2.0.13, )"
         }
       },
@@ -295,7 +295,7 @@
         "dependencies": {
           "HidSharp": "[2.6.4, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "System.IO.Ports": "[10.0.13, )"
         }
       },
@@ -303,18 +303,17 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
-          "Panelith.Devices": "[0.1.4, )"
+          "Panelith.Core": "[0.1.5, )",
+          "Panelith.Devices": "[0.1.5, )"
         }
       },
       "panelith.hosting": {
         "type": "Project",
         "dependencies": {
-          "Panelith.Devices": "[0.1.4, )",
-          "Panelith.Engine": "[0.1.4, )",
-          "Panelith.Monitoring": "[0.1.4, )",
-          "Panelith.Platform.Windows": "[0.1.4, )",
-          "Panelith.Rendering": "[0.1.4, )"
+          "Panelith.Devices": "[0.1.5, )",
+          "Panelith.Engine": "[0.1.5, )",
+          "Panelith.Monitoring": "[0.1.5, )",
+          "Panelith.Rendering": "[0.1.5, )"
         }
       },
       "panelith.monitoring": {
@@ -322,17 +321,14 @@
         "dependencies": {
           "LibreHardwareMonitorLib": "[0.9.6, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )"
+          "Panelith.Core": "[0.1.5, )"
         }
-      },
-      "panelith.platform.windows": {
-        "type": "Project"
       },
       "panelith.rendering": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "SkiaSharp": "[4.153.1, )"
         }
       },

@@ -4,6 +4,8 @@ Notable changes to Panelith. Versions follow [Semantic Versioning](https://semve
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-27
+
 ### App
 
 - **Now playing.** A screen shows the title, artist, album and album art of whatever Windows is playing. Long titles slide across the line. The reading stays on this PC.
@@ -12,6 +14,7 @@ Notable changes to Panelith. Versions follow [Semantic Versioning](https://semve
 - **Peak temperatures.** `@cpu.temp.peak` and `@gpu.temp.peak` are the highest values since Panelith started.
 - **Desk readings.** `@net.ipv4`, `@audio.device`, `@audio.volume` and `@battery` are theme values. Battery stays hidden on the Desk screen until this PC has one.
 - **Align, distribute and match size** in the designer. Ctrl-click selects more than one widget. One widget lines up with the canvas; several line up with each other.
+- **A simpler designer.** A new screen can start from three gauges, a big number, or a clock. New widgets land in an open spot. The side panel shows the words, sensor, size and colour, with the rest under More, and screen settings stay behind Screen. Dragging snaps to nearby edges; hold Shift to move freely. Align actions appear once two or more widgets are selected. A colour swatch offers the screen's own colours.
 
 ## [0.1.4] - 2026-10-19
 

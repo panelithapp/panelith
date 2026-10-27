@@ -139,7 +139,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
-          "Panelith.Core": "[0.1.4, )",
+          "Panelith.Core": "[0.1.5, )",
           "SkiaSharp": "[4.153.1, )"
         }
       },

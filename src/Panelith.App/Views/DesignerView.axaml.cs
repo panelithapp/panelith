@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using Avalonia.Platform.Storage;
 using Panelith.App.ViewModels;
 
@@ -121,6 +122,19 @@ public sealed partial class DesignerView : UserControl
         {
             main.Screens.Reload();
             designer.ReloadFromDisk(changed);
+        }
+    }
+
+    private void ApplySwatch(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string color } button)
+        {
+            return;
+        }
+
+        if (button.FindLogicalAncestorOfType<ItemsControl>()?.DataContext is PropertyField field)
+        {
+            field.UseSwatchCommand.Execute(color);
         }
     }
 }

@@ -17,8 +17,10 @@ public sealed class DesignCanvas : Control
         AvaloniaProperty.Register<DesignCanvas, DesignerViewModel?>(nameof(Designer));
 
     private const double Handle = 12d;
+    private const double SnapDistance = 8d;
     private static readonly IPen Selection = new Pen(new SolidColorBrush(Color.Parse("#3ee0c5")), 1.5d);
     private static readonly IPen Hover = new Pen(new SolidColorBrush(Color.Parse("#803ee0c5")), 1d, new DashStyle([4d, 3d], 0d));
+    private static readonly IPen Guide = new Pen(new SolidColorBrush(Color.Parse("#3ee0c5")), 1d);
     private static readonly IBrush HandleFill = new SolidColorBrush(Color.Parse("#3ee0c5"));
     private static readonly IBrush Empty = new SolidColorBrush(Color.FromRgb(10, 13, 18));
 
@@ -28,6 +30,8 @@ public sealed class DesignCanvas : Control
     private bool _moving;
     private bool _resizing;
     private int _hover = -1;
+    private double? _guideX;
+    private double? _guideY;
 
     static DesignCanvas()
     {
@@ -68,6 +72,18 @@ public sealed class DesignCanvas : Control
                 }
 
                 context.DrawRectangle(null, Selection, ToScreen(doc.Widgets[index].Bounds, picture));
+            }
+
+            if (_guideX is { } guideX)
+            {
+                var sx = picture.X + (guideX / doc.Canvas.Width * picture.Width);
+                context.DrawLine(Guide, new Point(sx, picture.Y), new Point(sx, picture.Bottom));
+            }
+
+            if (_guideY is { } guideY)
+            {
+                var sy = picture.Y + (guideY / doc.Canvas.Height * picture.Height);
+                context.DrawLine(Guide, new Point(picture.X, sy), new Point(picture.Right, sy));
             }
         }
 
@@ -184,7 +200,18 @@ public sealed class DesignCanvas : Control
         var b = _grabBounds;
         if (_moving)
         {
-            _designer.SetSelectedBounds(b.X + dx, b.Y + dy, b.Width, b.Height);
+            var x = b.X + dx;
+            var y = b.Y + dy;
+            if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+            {
+                _guideX = _guideY = null;
+            }
+            else
+            {
+                (x, y) = Snap(doc, x, y, b.Width, b.Height);
+            }
+
+            _designer.SetSelectedBounds(x, y, b.Width, b.Height);
         }
         else
         {
@@ -211,7 +238,9 @@ public sealed class DesignCanvas : Control
         }
 
         _moving = _resizing = false;
+        _guideX = _guideY = null;
         e.Pointer.Capture(null);
+        InvalidateVisual();
     }
 
     /// <inheritdoc />
@@ -220,6 +249,72 @@ public sealed class DesignCanvas : Control
         base.OnPointerExited(e);
         _hover = -1;
         InvalidateVisual();
+    }
+
+    /// <summary>Pulls a moving box onto the canvas centre or another widget's edge when it is already close.</summary>
+    private (double X, double Y) Snap(Panelith.Themes.Theme doc, double x, double y, double width, double height)
+    {
+        var bestX = SnapDistance + 1d;
+        var bestY = SnapDistance + 1d;
+        var snappedX = x;
+        var snappedY = y;
+        double? guideX = null;
+        double? guideY = null;
+        var targetsX = new List<double> { 0d, doc.Canvas.Width / 2d, doc.Canvas.Width };
+        var targetsY = new List<double> { 0d, doc.Canvas.Height / 2d, doc.Canvas.Height };
+        for (var i = 0; i < doc.Widgets.Count; i++)
+        {
+            if (_designer!.IsChosen(i))
+            {
+                continue;
+            }
+
+            var box = doc.Widgets[i].Bounds;
+            targetsX.Add(box.X);
+            targetsX.Add(box.Right);
+            targetsX.Add(box.CenterX);
+            targetsY.Add(box.Y);
+            targetsY.Add(box.Bottom);
+            targetsY.Add(box.CenterY);
+        }
+
+        void Consider(bool horizontal, double edge, double target)
+        {
+            var delta = Math.Abs(target - edge);
+            if (horizontal)
+            {
+                if (delta <= SnapDistance && delta < bestX)
+                {
+                    bestX = delta;
+                    snappedX = x + (target - edge);
+                    guideX = target;
+                }
+            }
+            else if (delta <= SnapDistance && delta < bestY)
+            {
+                bestY = delta;
+                snappedY = y + (target - edge);
+                guideY = target;
+            }
+        }
+
+        foreach (var target in targetsX)
+        {
+            Consider(true, x, target);
+            Consider(true, x + width, target);
+            Consider(true, x + (width / 2d), target);
+        }
+
+        foreach (var target in targetsY)
+        {
+            Consider(false, y, target);
+            Consider(false, y + height, target);
+            Consider(false, y + (height / 2d), target);
+        }
+
+        _guideX = guideX;
+        _guideY = guideY;
+        return (snappedX, snappedY);
     }
 
     private void StartDrag(Point at, Panelith.Themes.ThemeRect bounds, bool resizing, PointerPressedEventArgs e)
