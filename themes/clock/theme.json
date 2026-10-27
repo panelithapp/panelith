@@ -11,6 +11,6 @@
     { "type": "text", "stabilizeWidth": false, "x": 60, "y": 10, "width": 1800, "height": 340, "text": "{@sys.time}", "fontSize": 320, "fontWeight": 200, "align": "center", "verticalAlign": "middle", "letterSpacing": -6 },
     { "type": "text", "stabilizeWidth": false, "x": 60, "y": 350, "width": 1800, "height": 54, "text": "{@sys.date}", "fontSize": 42, "align": "center", "color": "#7d8798" },
     { "type": "text", "stabilizeWidth": false, "x": 60, "y": 420, "width": 1800, "height": 34,
-      "text": "CPU {@cpu.temp:0}\u00B0   \u00B7   GPU {@gpu.temp:0}\u00B0   \u00B7   RAM {@mem.load:0}%   \u00B7   up {@sys.uptime:duration}", "fontSize": 24, "align": "center", "color": "#3c4452" }
+      "text": "CPU {@cpu.temp:0}\u00B0  peak {@cpu.temp.peak:0}\u00B0   \u00B7   GPU {@gpu.temp:0}\u00B0  peak {@gpu.temp.peak:0}\u00B0   \u00B7   RAM {@mem.load:0}%", "fontSize": 24, "align": "center", "color": "#3c4452" }
   ]
 }

@@ -1,6 +1,6 @@
 # Screens
 
-A *screen* is one layout for the panel: a set of gauges, bars, graphs, text, pictures or videos bound to live sensor readings. Panelith comes with thirteen, and you can make your own with the [Designer](designer.md) or from a [video](video-screens.md).
+A *screen* is one layout for the panel: a set of gauges, bars, graphs, text, pictures or videos bound to live sensor readings. Panelith comes with fourteen, and you can make your own with the [Designer](designer.md) or from a [video](video-screens.md).
 
 ![The Screens page](images/screens.png)
 
@@ -50,6 +50,8 @@ All of them are drawn for a 1920×480 panel and adapt to 1280×480; the images b
 
 **Night**: dim and warm, for a dark room.
 ![Night](images/screens/night.png)
+
+**Now playing**: the song or video Windows is playing, with its title, artist and album art. A long title slides across the line. The picture and the names stay on this PC.
 
 **Overview**: the most information on one screen.
 ![Overview](images/screens/overview.png)

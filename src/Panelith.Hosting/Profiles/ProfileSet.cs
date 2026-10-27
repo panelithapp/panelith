@@ -95,8 +95,17 @@ public sealed record ProfileTriggers
     /// <summary>A global shortcut such as "Ctrl+Alt+1" that pins the profile.</summary>
     public string? Hotkey { get; init; }
 
+    /// <summary>
+    /// An expression that brings the profile up while it is true, such as
+    /// <c>@gpu.temp &gt; 85</c> or <c>@cpu.fan &lt; 100</c>. Empty means this
+    /// trigger is off. A missing sensor does not match.
+    /// </summary>
+    public string? Sensor { get; init; }
+
     /// <summary>Whether any automatic trigger is set.</summary>
-    public bool HasAny => Apps.Count > 0 || DetectGames || Schedules.Count > 0 || IdleMinutes is not null || OnLock;
+    public bool HasAny =>
+        Apps.Count > 0 || DetectGames || Schedules.Count > 0 || IdleMinutes is not null || OnLock
+        || !string.IsNullOrWhiteSpace(Sensor);
 }
 
 /// <summary>A daily time range on chosen days. A range that ends before it starts runs past midnight.</summary>

@@ -53,9 +53,22 @@ public sealed class DesignCanvas : Control
         }
 
         context.DrawImage(bitmap, new Rect(bitmap.Size), picture);
-        if (_hover >= 0 && _designer.Document is { } doc && _hover < doc.Widgets.Count && _hover != _designer.SelectedIndex)
+        if (_designer.Document is { } doc)
         {
-            context.DrawRectangle(null, Hover, ToScreen(doc.Widgets[_hover].Bounds, picture));
+            if (_hover >= 0 && _hover < doc.Widgets.Count && !_designer.IsChosen(_hover))
+            {
+                context.DrawRectangle(null, Hover, ToScreen(doc.Widgets[_hover].Bounds, picture));
+            }
+
+            foreach (var index in _designer.Chosen())
+            {
+                if (index == _designer.SelectedIndex)
+                {
+                    continue;
+                }
+
+                context.DrawRectangle(null, Selection, ToScreen(doc.Widgets[index].Bounds, picture));
+            }
         }
 
         if (_designer.SelectedBounds is { } bounds)
@@ -131,8 +144,9 @@ public sealed class DesignCanvas : Control
 
         var (x, y) = ToDesign(at, picture);
         var hit = _designer.HitTest(x, y);
-        _designer.Select(hit);
-        if (hit >= 0 && _designer.SelectedBounds is { } bounds)
+        var extend = e.KeyModifiers.HasFlag(KeyModifiers.Control);
+        _designer.Select(hit, extend);
+        if (!extend && hit >= 0 && _designer.SelectedBounds is { } bounds)
         {
             StartDrag(at, bounds, resizing: false, e);
         }

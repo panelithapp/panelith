@@ -1,6 +1,6 @@
 # Profiles
 
-A *profile* is a set of screens that comes up by itself: when a game or app starts, on a schedule, or when you step away. Panelith checks what the PC is doing every two seconds and shows the right profile.
+A *profile* is a set of screens that comes up by itself: when a sensor crosses a line, when a game or app starts, on a schedule, or when you step away. Panelith checks what the PC is doing every two seconds and shows the right profile.
 
 ![The Profiles page](images/profiles.png)
 
@@ -20,7 +20,7 @@ Each also has a shortcut, **Ctrl+Alt+1** to **Ctrl+Alt+7** in the order Everyday
 
 ## Which profile wins
 
-Profiles are checked from the top of the list down, and the first one whose conditions match is shown. Use the arrow buttons to reorder them. The default profile is used when nothing else matches.
+Profiles are checked from the top of the list down, and the first one whose conditions match is shown. A sensor condition is checked before programs and games, so a warning profile has to sit above Gaming if it should interrupt a game. Use the arrow buttons to reorder them. The default profile is used when nothing else matches.
 
 The card at the bottom left of the window shows the active profile and why it was chosen, for example *"Gaming · Cyberpunk2077.exe"*.
 
@@ -33,6 +33,7 @@ Select a profile to edit it:
 - **Default when nothing else applies**: exactly one profile is the default.
 - **Screens**: the screens it shows. The first one comes up when the profile starts. **Rotate every … seconds** cycles through them.
 - **When**: any one of these brings the profile up:
+  - **A sensor crosses a line**: an expression such as `@gpu.temp > 85` or `@cpu.fan < 100`. A sensor this PC does not have does not match, so a missing battery does not bring the profile up;
   - **Any game starts**, optionally counting a fullscreen window that keeps the GPU above 50% for 10 seconds;
   - **These programs are running**: add programs by name, such as `obs64`;
   - **On a schedule**: days and times, which may cross midnight;

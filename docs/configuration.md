@@ -49,4 +49,4 @@ All files are JSON and can be edited while Panelith is closed. A file that canno
 
 - `defaults` applies to every panel. Each entry in `panels` overrides it for one panel, matched by the stable `key` that `panelith devices` prints, and takes the same settings plus `displayName`. `forceProfile` is how to drive a panel whose USB id is shared by several products.
 - `orientation` is `portrait` (the panel's native way up) or `reversePortrait` (upside down). Other settings: `brightness` (0 to 100), `flipHorizontally` for panels behind a mirror.
-- `sensors.disabledSources` turns off a sensor source; `aliasOverrides` chooses the sensor behind a theme value (see [Sensors](sensors.md)).
+- `sensors.disabledSources` turns off a sensor source; `aliasOverrides` chooses the sensor behind a theme value. The Sensors page writes the same choice (see [Sensors](sensors.md)).

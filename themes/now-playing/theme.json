@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "id": "now-playing",
+  "name": "Now playing",
+  "author": "Panelith",
+  "description": "The song or video Windows is playing: title, artist and album art, read from this PC.",
+  "canvas": { "width": 1920, "height": 480, "scaling": "fit", "background": "#07080c" },
+  "background": { "color": "#07080c", "gradientTo": "#12151c", "gradientAngle": 90 },
+  "defaults": { "fontFamily": "Segoe UI Variable Display", "color": "#f4f1ea", "accentColor": "#e7c27a", "trackColor": "#1c1a16" },
+  "widgets": [
+    { "type": "image", "x": 48, "y": 48, "width": 384, "height": 384, "source": "@media.art", "fit": "cover" },
+    { "type": "text", "stabilizeWidth": false, "x": 480, "y": 72, "width": 1360, "height": 28, "text": "NOW PLAYING", "fontSize": 20, "fontWeight": 600, "letterSpacing": 4, "color": "#e7c27a" },
+    { "type": "text", "stabilizeWidth": false, "shrinkToFit": false, "scroll": true, "x": 480, "y": 118, "width": 1360, "height": 120, "text": "{@media.title}", "fontSize": 84, "fontWeight": 600, "verticalAlign": "middle" },
+    { "type": "text", "stabilizeWidth": false, "shrinkToFit": false, "scroll": true, "x": 480, "y": 250, "width": 1360, "height": 64, "text": "{@media.artist}", "fontSize": 42, "color": "#b7b1a6", "verticalAlign": "middle" },
+    { "type": "text", "stabilizeWidth": false, "shrinkToFit": false, "scroll": true, "x": 480, "y": 324, "width": 1360, "height": 48, "text": "{@media.album}", "fontSize": 28, "color": "#6f6a62", "verticalAlign": "middle" }
+  ]
+}

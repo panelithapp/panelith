@@ -117,8 +117,15 @@ public sealed record TextWidget : ThemeWidget
     /// <summary>
     /// Shrink the font until the text fits the box. Prevents a long GPU name or
     /// a four-digit fan speed from overflowing a layout authored for shorter values.
+    /// Ignored while <see cref="Scroll"/> is on, so a title keeps its size and moves instead.
     /// </summary>
     public bool ShrinkToFit { get; init; } = true;
+
+    /// <summary>
+    /// Slide the text sideways when it is wider than the box, then repeat.
+    /// For a song title or any other line that is too long to shrink.
+    /// </summary>
+    public bool Scroll { get; init; }
 
     /// <summary>Optional outline colour drawn behind the glyphs.</summary>
     public string? StrokeColor { get; init; }

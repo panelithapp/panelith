@@ -42,7 +42,9 @@ internal static class TextWidgetRenderer
         font.Edging = SKFontEdging.SubpixelAntialias;
 
         var layout = new TextLayout(widget.LetterSpacing, widget.TabularNumbers);
-        if (widget.ShrinkToFit)
+        float naturalWidth = MeasureWidth(font, text, layout);
+        var scrolling = widget.Scroll && naturalWidth > rect.Width + 1d;
+        if (widget.ShrinkToFit && !scrolling)
         {
             var fits = ShrinkToFit(font, text, rect, layout);
             font.Size = StickySize(ctx.StateFor<FitState>(widget), fits, ctx.Ticks);
@@ -71,6 +73,31 @@ internal static class TextWidgetRenderer
 
         _ = textHeight;
 
+        if (scrolling)
+        {
+            var shift = MarqueeShift((float)(textWidth - rect.Width), WidgetRenderContext.SecondsBetween(0, ctx.Ticks));
+            var clip = new SKRect((float)rect.X, (float)rect.Y, (float)rect.Right, (float)rect.Bottom);
+            ctx.Canvas.Save();
+            ctx.Canvas.ClipRect(clip);
+            DrawLine(ctx, widget, text, (float)rect.X - shift, baseline, font, layout, color);
+            DrawLine(ctx, widget, text, (float)rect.X - shift + textWidth + MarqueeGap, baseline, font, layout, color);
+            ctx.Canvas.Restore();
+            return;
+        }
+
+        DrawLine(ctx, widget, text, x, baseline, font, layout, color);
+    }
+
+    private static void DrawLine(
+        WidgetRenderContext ctx,
+        TextWidget widget,
+        string text,
+        float x,
+        float baseline,
+        SKFont font,
+        TextLayout layout,
+        SKColor color)
+    {
         if (widget.StrokeColor is not null && widget.StrokeWidth > 0d)
         {
             var stroke = ctx.Paints.Stroke;
@@ -86,6 +113,33 @@ internal static class TextWidgetRenderer
         fill.Style = SKPaintStyle.Fill;
         fill.IsStroke = false;
         DrawText(ctx.Canvas, text, x, baseline, font, fill, layout);
+    }
+
+    /// <summary>Empty space between the end of a scrolling line and the copy that follows it.</summary>
+    internal const float MarqueeGap = 64f;
+
+    /// <summary>How long a scrolling line waits at the start of each pass.</summary>
+    internal const double MarqueePauseSeconds = 0.8d;
+
+    /// <summary>How fast a scrolling line moves, in design units per second.</summary>
+    internal const double MarqueeSpeed = 48d;
+
+    /// <summary>
+    /// How far a line that overflows its box by <paramref name="overflow"/> has
+    /// moved at <paramref name="elapsedSeconds"/>. It pauses, slides until the
+    /// whole line and a gap have passed, then starts again.
+    /// </summary>
+    internal static float MarqueeShift(float overflow, double elapsedSeconds)
+    {
+        if (overflow <= 0f || elapsedSeconds <= 0d)
+        {
+            return 0f;
+        }
+
+        var travel = overflow + MarqueeGap;
+        var cycle = MarqueePauseSeconds + (travel / MarqueeSpeed);
+        var t = elapsedSeconds % cycle;
+        return t < MarqueePauseSeconds ? 0f : (float)((t - MarqueePauseSeconds) * MarqueeSpeed);
     }
 
     /// <summary>How long a larger font must keep fitting before the text grows back to it.</summary>

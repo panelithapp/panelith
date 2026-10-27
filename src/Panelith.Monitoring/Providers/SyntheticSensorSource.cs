@@ -66,6 +66,11 @@ public sealed class SyntheticSensorSource : ISensorSource
                     WellKnownSensors.Date => SystemInfoSensorSource.FormatDate(DateTime.Now),
                     WellKnownSensors.OperatingSystem => "Synthetic OS",
                     WellKnownSensors.GameName => "SyntheticGame",
+                    WellKnownSensors.NetworkAddress => "192.0.2.10",
+                    WellKnownSensors.AudioDevice => "Speakers",
+                    WellKnownSensors.MediaTitle => "Synthetic track",
+                    WellKnownSensors.MediaArtist => "Synthetic artist",
+                    WellKnownSensors.MediaAlbum => "Synthetic album",
                     _ => alias,
                 };
                 readings.Add(SensorReading.Textual(id, alias, text, Id));

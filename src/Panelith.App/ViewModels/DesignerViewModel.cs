@@ -158,6 +158,8 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
     private bool _rendering;
     private bool _loadingFields;
     private Theme? _editStart;
+    private readonly HashSet<int> _group = [];
+    private readonly Dictionary<int, ThemeRect> _dragStart = [];
 
     public DesignerViewModel(PanelithService service, ScreensViewModel screens)
     {
@@ -190,7 +192,7 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSelection), nameof(SelectedBounds))]
-    [NotifyCanExecuteChangedFor(nameof(DeleteCommand), nameof(DuplicateCommand), nameof(MoveUpCommand), nameof(MoveDownCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DeleteCommand), nameof(DuplicateCommand), nameof(MoveUpCommand), nameof(MoveDownCommand), nameof(AlignCommand), nameof(DistributeCommand), nameof(MatchSizeCommand))]
     public partial int SelectedIndex { get; set; } = -1;
 
     [ObservableProperty]
@@ -209,6 +211,9 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
     public bool HasDocument => Document is not null;
 
     public bool HasSelection => Document is not null && SelectedIndex >= 0 && SelectedIndex < Document.Widgets.Count;
+
+    /// <summary>Whether a widget is part of the current selection, including the primary one.</summary>
+    public bool IsChosen(int index) => index == SelectedIndex || _group.Contains(index);
 
     public double CanvasWidth => Document?.Canvas.Width ?? 1920;
 
@@ -384,7 +389,11 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
     {
         var doc = Document!;
         var widgets = doc.Widgets.ToList();
-        widgets.RemoveAt(SelectedIndex);
+        foreach (var index in Chosen().OrderByDescending(i => i))
+        {
+            widgets.RemoveAt(index);
+        }
+
         var next = Math.Min(SelectedIndex, widgets.Count - 1);
         Apply(doc with { Widgets = widgets });
         Select(next);
@@ -493,12 +502,72 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>Selects the widget at <paramref name="index"/>, or nothing for -1.</summary>
-    public void Select(int index)
+    /// <summary>
+    /// Selects the widget at <paramref name="index"/>, or nothing for -1.
+    /// With <paramref name="extend"/>, Ctrl-click adds or removes it and keeps the rest.
+    /// </summary>
+    public void Select(int index, bool extend = false)
     {
-        SelectedIndex = Document is null ? -1 : Math.Clamp(index, -1, Document.Widgets.Count - 1);
+        if (Document is null)
+        {
+            _group.Clear();
+            SelectedIndex = -1;
+            SelectedLayer = null;
+            return;
+        }
+
+        index = Math.Clamp(index, -1, Document.Widgets.Count - 1);
+        if (!extend || index < 0 || SelectedIndex < 0)
+        {
+            _group.Clear();
+        }
+        else if (index == SelectedIndex)
+        {
+            if (_group.Count == 0)
+            {
+                index = -1;
+            }
+            else
+            {
+                index = _group.Min();
+                _group.Remove(index);
+            }
+        }
+        else if (_group.Contains(index))
+        {
+            _group.Remove(index);
+            index = SelectedIndex;
+        }
+        else
+        {
+            _group.Add(SelectedIndex);
+        }
+
+        SelectedIndex = index;
         SelectedLayer = SelectedIndex >= 0 ? Layers.FirstOrDefault(l => l.Index == SelectedIndex) : null;
+        if (SelectedIndex < 0)
+        {
+            _group.Clear();
+        }
+
+        _group.Remove(SelectedIndex);
         BuildWidgetFields();
+        OnPropertyChanged(nameof(SelectedBounds));
+        AlignCommand.NotifyCanExecuteChanged();
+        DistributeCommand.NotifyCanExecuteChanged();
+        MatchSizeCommand.NotifyCanExecuteChanged();
+    }
+
+    /// <summary>The selected widget indexes, primary included, in list order.</summary>
+    public List<int> Chosen()
+    {
+        if (!HasSelection)
+        {
+            return [];
+        }
+
+        var count = Document!.Widgets.Count;
+        return _group.Where(i => i >= 0 && i < count && i != SelectedIndex).Append(SelectedIndex).OrderBy(i => i).ToList();
     }
 
     /// <summary>
@@ -549,9 +618,22 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>Starts a drag; the whole drag becomes one undo step.</summary>
-    public void BeginDrag() => _editStart = Document;
+    public void BeginDrag()
+    {
+        _editStart = Document;
+        _dragStart.Clear();
+        if (Document is null)
+        {
+            return;
+        }
 
-    /// <summary>Moves or resizes the selected widget during a drag.</summary>
+        foreach (var index in Chosen())
+        {
+            _dragStart[index] = Document.Widgets[index].Bounds;
+        }
+    }
+
+    /// <summary>Moves the selection, or resizes the primary widget, during a drag.</summary>
     public void SetSelectedBounds(double x, double y, double width, double height)
     {
         if (!HasSelection)
@@ -560,15 +642,35 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
         }
 
         var doc = Document!;
-        var index = SelectedIndex;
-        var widget = doc.Widgets[index] with
+        var widgets = doc.Widgets.ToList();
+        if (_dragStart.TryGetValue(SelectedIndex, out var origin) && _dragStart.Count > 1
+            && Math.Abs(width - origin.Width) < 0.5 && Math.Abs(height - origin.Height) < 0.5)
         {
-            X = Math.Round(x),
-            Y = Math.Round(y),
-            Width = Math.Max(4d, Math.Round(width)),
-            Height = Math.Max(4d, Math.Round(height)),
-        };
-        SetDocument(doc with { Widgets = doc.Widgets.Select((w, i) => i == index ? widget : w).ToList() }, dirty: true, rebuildLayers: false);
+            var dx = x - origin.X;
+            var dy = y - origin.Y;
+            foreach (var (index, start) in _dragStart)
+            {
+                widgets[index] = widgets[index] with
+                {
+                    X = Math.Round(start.X + dx),
+                    Y = Math.Round(start.Y + dy),
+                    Width = start.Width,
+                    Height = start.Height,
+                };
+            }
+        }
+        else
+        {
+            widgets[SelectedIndex] = widgets[SelectedIndex] with
+            {
+                X = Math.Round(x),
+                Y = Math.Round(y),
+                Width = Math.Max(4d, Math.Round(width)),
+                Height = Math.Max(4d, Math.Round(height)),
+            };
+        }
+
+        SetDocument(doc with { Widgets = widgets }, dirty: true, rebuildLayers: false);
         OnPropertyChanged(nameof(SelectedBounds));
     }
 
@@ -582,17 +684,105 @@ public sealed partial class DesignerViewModel : ObservableObject, IDisposable
         }
 
         _editStart = null;
+        _dragStart.Clear();
     }
 
-    /// <summary>Moves the selected widget by a few units, from the arrow keys.</summary>
+    /// <summary>Moves every selected widget by a few units, from the arrow keys.</summary>
     public void Nudge(double dx, double dy)
     {
-        if (SelectedBounds is { } b)
+        var chosen = Chosen();
+        if (chosen.Count == 0 || Document is null)
         {
-            BeginDrag();
-            SetSelectedBounds(b.X + dx, b.Y + dy, b.Width, b.Height);
-            EndDrag();
+            return;
         }
+
+        var doc = Document;
+        var widgets = doc.Widgets.ToList();
+        foreach (var index in chosen)
+        {
+            var bounds = widgets[index].Bounds;
+            widgets[index] = widgets[index] with { X = bounds.X + dx, Y = bounds.Y + dy };
+        }
+
+        Apply(doc with { Widgets = widgets });
+    }
+
+    /// <summary>Lines the selection up. One widget lines up with the canvas; several line up with each other.</summary>
+    [RelayCommand(CanExecute = nameof(CanAlign))]
+    private void Align(string edge)
+    {
+        if (!Enum.TryParse<Arrangement>(edge, true, out var arrangement))
+        {
+            return;
+        }
+
+        var indexes = Chosen();
+        if (indexes.Count == 0 || Document is not { } doc)
+        {
+            return;
+        }
+
+        var boxes = indexes.Select(i => doc.Widgets[i].Bounds).ToList();
+        var canvas = indexes.Count == 1
+            ? new ThemeRect(0, 0, doc.Canvas.Width, doc.Canvas.Height)
+            : WidgetArrangement.Union(boxes);
+        WriteBounds(indexes, boxes.Select(box => WidgetArrangement.Align(box, canvas, arrangement)).ToList());
+    }
+
+    private bool CanAlign(string? edge) => HasSelection;
+
+    /// <summary>Spreads three or more widgets evenly between the outermost two.</summary>
+    [RelayCommand(CanExecute = nameof(CanDistribute))]
+    private void Distribute(string axis)
+    {
+        var indexes = Chosen();
+        if (indexes.Count < 3 || Document is not { } doc)
+        {
+            return;
+        }
+
+        var boxes = indexes.Select(i => doc.Widgets[i].Bounds).ToList();
+        WriteBounds(indexes, WidgetArrangement.Distribute(boxes, string.Equals(axis, "x", StringComparison.OrdinalIgnoreCase)));
+    }
+
+    private bool CanDistribute(string? axis) => Chosen().Count >= 3;
+
+    /// <summary>Gives the other selected widgets the primary widget's width, height, or both.</summary>
+    [RelayCommand(CanExecute = nameof(CanMatchSize))]
+    private void MatchSize(string which)
+    {
+        var indexes = Chosen();
+        if (indexes.Count < 2 || Document is not { } doc || !indexes.Contains(SelectedIndex))
+        {
+            return;
+        }
+
+        var boxes = indexes.Select(i => doc.Widgets[i].Bounds).ToList();
+        var source = indexes.IndexOf(SelectedIndex);
+        var matchWidth = which is "width" or "both";
+        var matchHeight = which is "height" or "both";
+        WriteBounds(indexes, WidgetArrangement.MatchSize(boxes, source, matchWidth, matchHeight));
+    }
+
+    private bool CanMatchSize(string? which) => Chosen().Count >= 2;
+
+    private void WriteBounds(IReadOnlyList<int> indexes, IReadOnlyList<ThemeRect> bounds)
+    {
+        var doc = Document!;
+        var widgets = doc.Widgets.ToList();
+        for (var i = 0; i < indexes.Count; i++)
+        {
+            var box = bounds[i];
+            widgets[indexes[i]] = widgets[indexes[i]] with
+            {
+                X = box.X,
+                Y = box.Y,
+                Width = box.Width,
+                Height = box.Height,
+            };
+        }
+
+        Apply(doc with { Widgets = widgets });
     }
 
     /// <summary>Redraws the canvas with current sensor values, off the UI thread.</summary>

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Panelith.Expressions;
 
 namespace Panelith.Hosting.Profiles;
 
@@ -25,6 +26,9 @@ public enum ProfileTrigger
 
     /// <summary>Its schedule covers the current time.</summary>
     Schedule,
+
+    /// <summary>A sensor expression is true, such as a temperature that has gone too high.</summary>
+    Sensor,
 }
 
 /// <summary>The profile to use and why.</summary>
@@ -40,9 +44,10 @@ public sealed record ProfileDecision(Profile Profile, ProfileTrigger Trigger, st
 /// </summary>
 /// <remarks>
 /// <para>
-/// Order of precedence: a pinned profile, then programs and games, then idle or
-/// lock, then schedules, then the default. Within each kind, earlier profiles
-/// in the list win. Programs beat idle so a paused game stays on its profile.
+/// Order of precedence: a pinned profile, then a sensor expression, then programs
+/// and games, then idle or lock, then schedules, then the default. Within each
+/// kind, earlier profiles in the list win, so a warning profile has to sit above
+/// Gaming to interrupt a game. Programs beat idle so a paused game stays on its profile.
 /// </para>
 /// <para>
 /// When an idle or lock profile wins while a dimmed schedule (Night) also
@@ -238,6 +243,11 @@ public sealed class ProfileResolver
 
         var enabled = set.Profiles.Where(p => p.Enabled).ToList();
 
+        if (MatchSensor(enabled, snapshot) is { } sensor)
+        {
+            return sensor;
+        }
+
         if (MatchApps(enabled, snapshot) is { } app)
         {
             _lastApp = (app, snapshot.Now);
@@ -312,5 +322,55 @@ public sealed class ProfileResolver
         }
 
         return null;
+    }
+
+    private static ProfileDecision? MatchSensor(List<Profile> enabled, ActivitySnapshot snapshot)
+    {
+        foreach (var profile in enabled)
+        {
+            if (SensorIsTrue(profile.Triggers.Sensor, snapshot.Sensors))
+            {
+                var reason = profile.Triggers.Sensor!.Trim();
+                if (reason.Length > 48)
+                {
+                    reason = reason[..48];
+                }
+
+                return new ProfileDecision(profile, ProfileTrigger.Sensor, reason, profile.Dim);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>Whether a sensor expression is true for these readings. A missing sensor is false.</summary>
+    internal static bool SensorIsTrue(string? expression, IReadOnlyDictionary<string, double> sensors)
+    {
+        if (string.IsNullOrWhiteSpace(expression) || expression.Length > 240)
+        {
+            return false;
+        }
+
+        if (!BindingExpression.TryParse(expression, out var parsed, out _))
+        {
+            return false;
+        }
+
+        try
+        {
+            return parsed!.Evaluate(new NumberMap(sensors)).AsBoolean();
+        }
+        catch (ExpressionException)
+        {
+            return false;
+        }
+    }
+
+    private sealed class NumberMap(IReadOnlyDictionary<string, double> values) : IBindingContext
+    {
+        public BindingValue ResolveSensor(string reference) =>
+            values.TryGetValue(reference, out var value) ? BindingValue.FromNumber(value) : BindingValue.Missing;
+
+        public BindingValue ResolveVariable(string name) => BindingValue.Missing;
     }
 }

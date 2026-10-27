@@ -103,6 +103,29 @@ public sealed class SensorHubTests
         Assert.Same(snap, hub.Current);
     }
 
+    [Fact]
+    public async Task TemperaturePeakRisesAndDoesNotFall()
+    {
+        var package = SensorId.From("cpu", "0", "temperature", "package");
+        var source = new StubSource("cpu", [
+            SensorReading.Numeric(package, "Package", SensorKind.Temperature, 50, 0d, 120d, "cpu"),
+        ]);
+        var resolver = new SensorAliasResolver();
+        await using var hub = new SensorHub([source], resolver);
+
+        source.SetValue(50);
+        await hub.PollOnceAsync(Ct);
+        source.SetValue(72);
+        await hub.PollOnceAsync(Ct);
+        source.SetValue(40);
+        await hub.PollOnceAsync(Ct);
+
+        Assert.True(hub.Aliases.TryGetValue(WellKnownSensors.CpuTemperaturePeak, out var peakId));
+        Assert.True(hub.Current.TryGet(peakId, out var peak));
+        Assert.Equal(72d, peak.Value);
+        Assert.Equal(package, hub.Aliases[WellKnownSensors.CpuTemperature]);
+    }
+
     private sealed class StubSource : ISensorSource
     {
         private SensorReading[] _readings;

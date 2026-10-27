@@ -2,6 +2,17 @@
 
 Notable changes to Panelith. Versions follow [Semantic Versioning](https://semver.org/), and each section here becomes the notes of its GitHub release.
 
+## [Unreleased]
+
+### App
+
+- **Now playing.** A screen shows the title, artist, album and album art of whatever Windows is playing. Long titles slide across the line. The reading stays on this PC.
+- **A profile can watch a sensor.** An expression such as `@gpu.temp > 85` or `@cpu.fan < 100` brings that profile up, and it is checked before games and programs, so a warning screen can interrupt a game when the profile sits above Gaming.
+- **Choose the sensor behind a theme name** on the Sensors page, instead of editing `panelith.json` by hand. Automatic remains the default.
+- **Peak temperatures.** `@cpu.temp.peak` and `@gpu.temp.peak` are the highest values since Panelith started.
+- **Desk readings.** `@net.ipv4`, `@audio.device`, `@audio.volume` and `@battery` are theme values. Battery stays hidden on the Desk screen until this PC has one.
+- **Align, distribute and match size** in the designer. Ctrl-click selects more than one widget. One widget lines up with the canvas; several line up with each other.
+
 ## [0.1.4] - 2026-10-19
 
 A security hardening release. Nothing here changes how Panelith looks or behaves in normal use.

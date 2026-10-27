@@ -44,6 +44,24 @@
 
     <ScrollViewer Grid.Row="2">
       <StackPanel Spacing="18" Margin="0,0,0,28">
+        <Border Classes="card" Padding="14">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Choose the sensor behind a name" Classes="h2" />
+            <TextBlock Classes="muted" FontSize="12" TextWrapping="Wrap"
+                       Text="Automatic is right on most PCs. Pick a different sensor when a second GPU or the wrong temperature is being used. The choice is saved on this PC." />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+              <ComboBox Grid.Column="0" ItemsSource="{Binding AliasNames}" SelectedItem="{Binding ChosenAlias}" PlaceholderText="Theme name" HorizontalAlignment="Stretch" />
+              <ComboBox Grid.Column="1" ItemsSource="{Binding PinChoices}" SelectedItem="{Binding ChosenPin}" PlaceholderText="Sensor" HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:SensorPin">
+                    <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </Grid>
+          </StackPanel>
+        </Border>
+
         <Border Classes="card" Padding="8,14">
           <StackPanel Spacing="4">
             <StackPanel Margin="12,0,12,8" Spacing="2">

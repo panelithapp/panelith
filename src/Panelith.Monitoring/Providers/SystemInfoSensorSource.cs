@@ -1,5 +1,7 @@
 using System.Globalization;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using Panelith.Sensors;
 
@@ -165,6 +167,38 @@ public sealed partial class SystemInfoSensorSource : ISensorSource
         double? upRate = haveRate ? up : null;
         readings.Add(SensorReading.Numeric(SensorId.From("network", "0", "throughput", "down"), "Network Download", SensorKind.Throughput, downRate, 0d, null, Id));
         readings.Add(SensorReading.Numeric(SensorId.From("network", "0", "throughput", "up"), "Network Upload", SensorKind.Throughput, upRate, 0d, null, Id));
+        readings.Add(SensorReading.Textual(SensorId.From("network", "0", "address", "ipv4"), "IPv4 address", FirstIPv4(interfaces) ?? string.Empty, Id));
+    }
+
+    private static string? FirstIPv4(IEnumerable<NetworkInterface> interfaces)
+    {
+        foreach (var adapter in interfaces)
+        {
+            if (!IsPhysicalAdapter(adapter))
+            {
+                continue;
+            }
+
+            IPInterfaceProperties properties;
+            try
+            {
+                properties = adapter.GetIPProperties();
+            }
+            catch (NetworkInformationException)
+            {
+                continue;
+            }
+
+            foreach (var address in properties.UnicastAddresses)
+            {
+                if (address.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(address.Address))
+                {
+                    return address.Address.ToString();
+                }
+            }
+        }
+
+        return null;
     }
 
     private static bool IsPhysicalAdapter(NetworkInterface adapter)

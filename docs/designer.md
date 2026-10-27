@@ -27,9 +27,11 @@ The **Add** bar puts a widget in the middle of the canvas:
 
 ## Editing
 
-- **Select** a widget by clicking it, or in the **Layers** list.
-- **Move** it by dragging. **Resize** it from the corner; hold **Shift** to keep its shape.
-- **Nudge** it with the arrow keys.
+- **Select** a widget by clicking it, or in the **Layers** list. **Ctrl-click** the canvas to add or remove widgets from the selection. The widget whose properties are showing is the primary one.
+- **Move** the selection by dragging. **Resize** the primary widget from the corner; hold **Shift** to keep its shape. Arrow keys nudge every selected widget.
+- **Left, Centre, Right, Top, Middle and Bottom** line the selection up. One widget lines up with the canvas; several line up with the box around all of them.
+- **Space across** and **Space down** spread three or more widgets evenly, leaving the outermost two where they are.
+- **Same width, Same height and Same size** give the other selected widgets the primary widget's size.
 - **Delete** removes it; **Ctrl+D** duplicates it.
 - **Forward** and **Back** change which widgets are drawn on top.
 - **Undo** and **Redo** go back and forth through every change, up to 100 steps.

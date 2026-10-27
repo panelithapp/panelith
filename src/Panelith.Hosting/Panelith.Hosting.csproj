@@ -6,6 +6,35 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <!--
+    The media session is a Windows Runtime API. The projection assemblies are
+    referenced directly so this library can stay on net10.0 and still build on
+    Linux, where those files are left out.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.NET.Ref" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Compile Remove="Platform/PlatformSensors.cs" />
+    <Reference Include="WinRT.Runtime">
+      <HintPath>$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\WinRT.Runtime.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Windows.SDK.NET">
+      <HintPath>$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\Microsoft.Windows.SDK.NET.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Content Include="$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\WinRT.Runtime.dll" Link="WinRT.Runtime.dll" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="$(PkgMicrosoft_Windows_SDK_NET_Ref)\lib\net8.0\Microsoft.Windows.SDK.NET.dll" Link="Microsoft.Windows.SDK.NET.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
+    <Compile Remove="Platform/PlatformSensors.Windows.cs" />
+    <Compile Remove="Platform/MediaSessionSensorSource.cs" />
+    <Compile Remove="Platform/AudioDeviceSensorSource.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="../Panelith.Engine/Panelith.Engine.csproj" />
     <ProjectReference Include="../Panelith.Devices/Panelith.Devices.csproj" />

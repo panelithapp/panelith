@@ -10,8 +10,10 @@
   "widgets": [
     { "type": "text", "stabilizeWidth": false, "x": 60, "y": 60, "width": 560, "height": 190, "text": "{@sys.time}", "fontSize": 170, "fontWeight": 300, "verticalAlign": "middle", "letterSpacing": -3 },
     { "type": "text", "stabilizeWidth": false, "x": 66, "y": 262, "width": 560, "height": 50, "text": "{@sys.date}", "fontSize": 38, "color": "#8b97a6" },
-    { "type": "text", "stabilizeWidth": false, "x": 66, "y": 330, "width": 560, "height": 32, "text": "{@sys.host}", "fontSize": 24, "color": "#4f5b69" },
+    { "type": "text", "stabilizeWidth": false, "x": 66, "y": 330, "width": 560, "height": 32, "text": "{@sys.host}   \u00B7   {@net.ipv4}", "fontSize": 24, "color": "#4f5b69" },
     { "type": "text", "stabilizeWidth": false, "x": 66, "y": 366, "width": 560, "height": 32, "text": "up {@sys.uptime:duration}", "fontSize": 24, "color": "#4f5b69" },
+    { "type": "text", "stabilizeWidth": false, "x": 66, "y": 402, "width": 360, "height": 32, "text": "{@audio.device}   \u00B7   {@audio.volume:0}%", "fontSize": 24, "color": "#4f5b69" },
+    { "type": "text", "stabilizeWidth": false, "x": 430, "y": 402, "width": 196, "height": 32, "text": "battery {@battery:0}%", "fontSize": 24, "color": "#4f5b69", "align": "right", "visibleWhen": "@battery >= 0" },
 
     { "type": "shape", "x": 660, "y": 70, "width": 2, "height": 340, "shape": "rectangle", "fill": "#18202a" },
 

@@ -203,6 +203,14 @@ public sealed class PanelithRuntime : IAsyncDisposable
             }
         }
 
+        if (OperatingSystem.IsWindows())
+        {
+            foreach (var source in PlatformSensors.Create(sensorOptions))
+            {
+                yield return source;
+            }
+        }
+
         if (sensorOptions.IsSourceEnabled("system"))
         {
             yield return new SystemInfoSensorSource();

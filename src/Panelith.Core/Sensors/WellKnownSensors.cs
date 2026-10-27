@@ -134,6 +134,33 @@ public static class WellKnownSensors
     /// <summary>The executable name of the game RivaTuner is measuring.</summary>
     public const string GameName = "@game.name";
 
+    /// <summary>Highest CPU temperature since Panelith started.</summary>
+    public const string CpuTemperaturePeak = "@cpu.temp.peak";
+
+    /// <summary>Highest GPU temperature since Panelith started.</summary>
+    public const string GpuTemperaturePeak = "@gpu.temp.peak";
+
+    /// <summary>The machine's first local IPv4 address.</summary>
+    public const string NetworkAddress = "@net.ipv4";
+
+    /// <summary>Battery charge, as a percentage. Missing on a desktop with no battery.</summary>
+    public const string Battery = "@battery";
+
+    /// <summary>Name of the default speakers or headphones.</summary>
+    public const string AudioDevice = "@audio.device";
+
+    /// <summary>Volume of the default playback device, from 0 to 100.</summary>
+    public const string AudioVolume = "@audio.volume";
+
+    /// <summary>Title of the song or video Windows is playing.</summary>
+    public const string MediaTitle = "@media.title";
+
+    /// <summary>Artist of the song or video Windows is playing.</summary>
+    public const string MediaArtist = "@media.artist";
+
+    /// <summary>Album of the song or video Windows is playing.</summary>
+    public const string MediaAlbum = "@media.album";
+
     /// <summary>How many per-core load aliases exist: <c>@cpu.core1</c> to <c>@cpu.core32</c>.</summary>
     public const int MaxCoreAliases = 32;
 
@@ -195,6 +222,15 @@ public static class WellKnownSensors
             [GameFrameTime] = SensorKind.Unknown,
             [GameLow1] = SensorKind.FrameRate,
             [GameName] = SensorKind.Text,
+            [CpuTemperaturePeak] = SensorKind.Temperature,
+            [GpuTemperaturePeak] = SensorKind.Temperature,
+            [NetworkAddress] = SensorKind.Text,
+            [Battery] = SensorKind.Load,
+            [AudioDevice] = SensorKind.Text,
+            [AudioVolume] = SensorKind.Load,
+            [MediaTitle] = SensorKind.Text,
+            [MediaArtist] = SensorKind.Text,
+            [MediaAlbum] = SensorKind.Text,
         };
 
         for (var n = 1; n <= MaxCoreAliases; n++)

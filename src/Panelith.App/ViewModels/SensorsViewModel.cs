@@ -6,6 +6,9 @@ using Panelith.Sensors;
 
 namespace Panelith.App.ViewModels;
 
+/// <summary>One choice in the sensor pin list. A null id means the automatic pick.</summary>
+public sealed record SensorPin(string? Id, string Label);
+
 /// <summary>One sensor or alias in the browser.</summary>
 public sealed partial class SensorRowViewModel(string key, string name, string reference, string source) : ObservableObject
 {
@@ -45,6 +48,21 @@ public sealed partial class SensorsViewModel(PanelithService service) : Observab
     /// <summary>Every raw sensor, filtered.</summary>
     public ObservableCollection<SensorRowViewModel> Sensors { get; } = [];
 
+    /// <summary>Theme names the chooser can pin.</summary>
+    public ObservableCollection<string> AliasNames { get; } = [];
+
+    /// <summary>Raw sensors of the same kind as <see cref="ChosenAlias"/>, plus Automatic.</summary>
+    public ObservableCollection<SensorPin> PinChoices { get; } = [];
+
+    [ObservableProperty]
+    public partial string? ChosenAlias { get; set; }
+
+    [ObservableProperty]
+    public partial SensorPin? ChosenPin { get; set; }
+
+    private bool _applyingPin;
+    private string _pinSignature = string.Empty;
+
     [ObservableProperty]
     public partial string Filter { get; set; } = string.Empty;
 
@@ -56,6 +74,22 @@ public sealed partial class SensorsViewModel(PanelithService service) : Observab
     public partial bool NeedsElevation { get; set; }
 
     partial void OnFilterChanged(string value) => ApplyFilter();
+
+    partial void OnChosenAliasChanged(string? value)
+    {
+        _pinSignature = string.Empty;
+        RebuildPins();
+    }
+
+    partial void OnChosenPinChanged(SensorPin? value)
+    {
+        if (_applyingPin || value is null || ChosenAlias is null)
+        {
+            return;
+        }
+
+        service.SetAliasOverride(ChosenAlias, value.Id);
+    }
 
     /// <summary>Rereads every value. Called about once a second while the page is visible.</summary>
     public void Refresh()
@@ -111,7 +145,78 @@ public sealed partial class SensorsViewModel(PanelithService service) : Observab
         if (structureChanged)
         {
             ApplyFilter();
+            SyncAliasNames();
         }
+
+        RebuildPins();
+    }
+
+    private void SyncAliasNames()
+    {
+        var names = _all.Values
+            .Where(r => r.Key.StartsWith("alias:", StringComparison.Ordinal))
+            .Select(r => r.Reference)
+            .Order(StringComparer.Ordinal)
+            .ToList();
+        if (AliasNames.SequenceEqual(names))
+        {
+            return;
+        }
+
+        var keep = ChosenAlias;
+        AliasNames.Clear();
+        foreach (var name in names)
+        {
+            AliasNames.Add(name);
+        }
+
+        if (keep is not null && AliasNames.Contains(keep))
+        {
+            ChosenAlias = keep;
+        }
+    }
+
+    private void RebuildPins()
+    {
+        if (ChosenAlias is null || !WellKnownSensors.All.TryGetValue(ChosenAlias, out var kind))
+        {
+            if (PinChoices.Count > 0)
+            {
+                _applyingPin = true;
+                PinChoices.Clear();
+                ChosenPin = null;
+                _applyingPin = false;
+            }
+
+            _pinSignature = string.Empty;
+            return;
+        }
+
+        var readings = service.Runtime.Sensors.Current
+            .Where(r => r.Kind == kind)
+            .OrderBy(r => r.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(r => r.Id.Value, StringComparer.Ordinal)
+            .ToList();
+        var signature = kind + "|" + string.Join("|", readings.Select(r => r.Id.Value));
+        var pinned = service.Options.Sensors.AliasOverrides is { } map && map.TryGetValue(ChosenAlias, out var id)
+            ? id
+            : null;
+        if (signature == _pinSignature)
+        {
+            return;
+        }
+
+        _pinSignature = signature;
+        _applyingPin = true;
+        PinChoices.Clear();
+        PinChoices.Add(new SensorPin(null, "Automatic"));
+        foreach (var reading in readings)
+        {
+            PinChoices.Add(new SensorPin(reading.Id.Value, $"{reading.DisplayName}  [{reading.Id.Value}]"));
+        }
+
+        ChosenPin = PinChoices.FirstOrDefault(p => string.Equals(p.Id, pinned, StringComparison.OrdinalIgnoreCase)) ?? PinChoices[0];
+        _applyingPin = false;
     }
 
     private void ApplyFilter()
@@ -178,6 +283,15 @@ public sealed partial class SensorsViewModel(PanelithService service) : Observab
         WellKnownSensors.GameFrameTime => "Game frame time, ms",
         WellKnownSensors.GameLow1 => "Game 1% low",
         WellKnownSensors.GameName => "Game",
+        WellKnownSensors.CpuTemperaturePeak => "Highest CPU temperature since start",
+        WellKnownSensors.GpuTemperaturePeak => "Highest GPU temperature since start",
+        WellKnownSensors.NetworkAddress => "IPv4 address",
+        WellKnownSensors.Battery => "Battery",
+        WellKnownSensors.AudioDevice => "Playback device",
+        WellKnownSensors.AudioVolume => "Volume",
+        WellKnownSensors.MediaTitle => "Now playing",
+        WellKnownSensors.MediaArtist => "Artist",
+        WellKnownSensors.MediaAlbum => "Album",
         _ when WellKnownSensors.CoreNumber(alias) is { } core => $"CPU core {core} load",
         _ => alias,
     };

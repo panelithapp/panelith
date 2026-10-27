@@ -163,4 +163,36 @@ public sealed class SensorAliasResolverTests
         var map = resolver.Resolve(readings);
         Assert.Equal("cpu/0/temperature/core_0", map[WellKnownSensors.CpuTemperature].Value);
     }
+
+    [Fact]
+    public void PeaksBatteryAddressAndMediaResolveToTheirOwnIds()
+    {
+        var readings = new[]
+        {
+            SensorReading.Numeric(SensorId.From("cpu", "0", "temperature", "package"), "Package", SensorKind.Temperature, 60),
+            SensorReading.Numeric(SensorId.From("peak", "0", "temperature", "cpu"), "CPU temperature peak", SensorKind.Temperature, 70),
+            SensorReading.Numeric(SensorId.From("peak", "0", "temperature", "gpu"), "GPU temperature peak", SensorKind.Temperature, 80),
+            SensorReading.Numeric(SensorId.From("battery", "0", "load", "charge"), "Charge", SensorKind.Load, 40),
+            SensorReading.Numeric(SensorId.From("battery", "0", "load", "capacity"), "Capacity", SensorKind.Load, 90),
+            SensorReading.Textual(SensorId.From("network", "0", "address", "ipv4"), "IPv4 address", "192.0.2.10"),
+            SensorReading.Textual(SensorId.From("audio", "0", "name", "device"), "Playback device", "Speakers"),
+            SensorReading.Numeric(SensorId.From("audio", "0", "load", "volume"), "Volume", SensorKind.Load, 30),
+            SensorReading.Textual(SensorId.From("media", "0", "text", "title"), "Now playing", "Track"),
+            SensorReading.Textual(SensorId.From("media", "0", "text", "artist"), "Artist", "Artist"),
+            SensorReading.Textual(SensorId.From("media", "0", "text", "album"), "Album", "Album"),
+        };
+
+        var map = new SensorAliasResolver().Resolve(readings);
+
+        Assert.Equal("cpu/0/temperature/package", map[WellKnownSensors.CpuTemperature].Value);
+        Assert.Equal("peak/0/temperature/cpu", map[WellKnownSensors.CpuTemperaturePeak].Value);
+        Assert.Equal("peak/0/temperature/gpu", map[WellKnownSensors.GpuTemperaturePeak].Value);
+        Assert.Equal("battery/0/load/capacity", map[WellKnownSensors.Battery].Value);
+        Assert.Equal("network/0/address/ipv4", map[WellKnownSensors.NetworkAddress].Value);
+        Assert.Equal("audio/0/name/device", map[WellKnownSensors.AudioDevice].Value);
+        Assert.Equal("audio/0/load/volume", map[WellKnownSensors.AudioVolume].Value);
+        Assert.Equal("media/0/text/title", map[WellKnownSensors.MediaTitle].Value);
+        Assert.Equal("media/0/text/artist", map[WellKnownSensors.MediaArtist].Value);
+        Assert.Equal("media/0/text/album", map[WellKnownSensors.MediaAlbum].Value);
+    }
 }

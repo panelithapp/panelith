@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using Panelith.Monitoring.Hub;
 using Panelith.Monitoring.Providers;
 using Panelith.Sensors;
 
@@ -149,13 +150,15 @@ public sealed class SensorAliasResolver
 
         return alias switch
         {
-            WellKnownSensors.CpuTemperature => ScoreCpuTemp(id, name, kind),
+            WellKnownSensors.CpuTemperature => id.StartsWith("peak/", StringComparison.Ordinal) ? -1 : ScoreCpuTemp(id, name, kind),
             WellKnownSensors.CpuLoad => ScoreCpuLoad(id, name, kind),
             WellKnownSensors.CpuClock => ScoreCpuClock(id, name, kind),
             WellKnownSensors.CpuPower => ScoreCpuPower(id, name, kind),
             WellKnownSensors.CpuFan => ScoreSimple(id, name, kind, SensorKind.Fan, "cpu", ["cpu", "processor"], exclude: ["gpu"]),
             WellKnownSensors.CpuName => kind == SensorKind.Text && id.StartsWith("cpu/", StringComparison.Ordinal) ? 100 : -1,
-            WellKnownSensors.GpuTemperature => ScoreGpu(id, name, kind, SensorKind.Temperature, ["core", "edge", "gpu_temperature", "temperature"], exclude: ["memory", "vr_", "soc", "junction", "hot_spot", "hotspot"]),
+            WellKnownSensors.GpuTemperature => id.StartsWith("peak/", StringComparison.Ordinal)
+                ? -1
+                : ScoreGpu(id, name, kind, SensorKind.Temperature, ["core", "edge", "gpu_temperature", "temperature"], exclude: ["memory", "vr_", "soc", "junction", "hot_spot", "hotspot"]),
             WellKnownSensors.GpuLoad => ScoreGpu(id, name, kind, SensorKind.Load, ["core", "util", "graphics"], exclude: ["memory", "bus", "power", "board", "video", "controller", "copy", "encode", "decode", "jpeg", "security", "compute", "timer", "optical", "vr"]),
             WellKnownSensors.GpuClock => ScoreGpu(id, name, kind, SensorKind.Clock, ["core", "graphics", "shader"], exclude: ["memory", "soc", "video"]),
             WellKnownSensors.GpuPower => ScoreGpu(id, name, kind, SensorKind.Power, ["package", "board", "total", "ppt"], exclude: ["soc", "memory"]),
@@ -200,8 +203,33 @@ public sealed class SensorAliasResolver
             WellKnownSensors.GameLow1 => kind == SensorKind.FrameRate && id.Equals(RtssSensorSource.Low1Id.Value, StringComparison.Ordinal) ? 100 : -1,
             WellKnownSensors.GameFrameTime => id.Equals(RtssSensorSource.FrameTimeId.Value, StringComparison.Ordinal) ? 100 : -1,
             WellKnownSensors.GameName => kind == SensorKind.Text && id.Equals(RtssSensorSource.NameId.Value, StringComparison.Ordinal) ? 100 : -1,
+            WellKnownSensors.CpuTemperaturePeak => id.Equals(PeakTracker.CpuId.Value, StringComparison.Ordinal) ? 20_000 : -1,
+            WellKnownSensors.GpuTemperaturePeak => id.Equals(PeakTracker.GpuId.Value, StringComparison.Ordinal) ? 20_000 : -1,
+            WellKnownSensors.NetworkAddress => kind == SensorKind.Text && id.EndsWith("address/ipv4", StringComparison.Ordinal) ? 100 : -1,
+            WellKnownSensors.Battery => ScoreBattery(id, name, kind),
+            WellKnownSensors.AudioDevice => kind == SensorKind.Text && id.EndsWith("name/device", StringComparison.Ordinal) ? 100 : -1,
+            WellKnownSensors.AudioVolume => kind == SensorKind.Load && id.EndsWith("load/volume", StringComparison.Ordinal) ? 100 : -1,
+            WellKnownSensors.MediaTitle => kind == SensorKind.Text && id.EndsWith("text/title", StringComparison.Ordinal) ? 100 : -1,
+            WellKnownSensors.MediaArtist => kind == SensorKind.Text && id.EndsWith("text/artist", StringComparison.Ordinal) ? 100 : -1,
+            WellKnownSensors.MediaAlbum => kind == SensorKind.Text && id.EndsWith("text/album", StringComparison.Ordinal) ? 100 : -1,
             _ => -1,
         };
+    }
+
+    private static int ScoreBattery(string id, string name, SensorKind kind)
+    {
+        if (kind != SensorKind.Load || !id.Contains("battery", StringComparison.OrdinalIgnoreCase))
+        {
+            return -1;
+        }
+
+        var score = 40;
+        if (id.Contains("capacity", StringComparison.OrdinalIgnoreCase) || ContainsAny(name, ["capacity", "charge", "level", "remaining"]))
+        {
+            score += 40;
+        }
+
+        return score;
     }
 
     private static int ScoreGpuVideo(string id, string name, SensorKind kind)

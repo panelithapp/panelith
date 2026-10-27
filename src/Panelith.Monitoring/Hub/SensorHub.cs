@@ -29,6 +29,7 @@ public sealed class SensorHub : IAsyncDisposable
     private readonly CancellationTokenSource _runCts = new();
 
     private Task? _loop;
+    private readonly PeakTracker _peaks = new();
     private SensorSnapshot _current = SensorSnapshot.Empty;
     private IReadOnlyDictionary<string, SensorId> _aliases =
         new Dictionary<string, SensorId>(StringComparer.OrdinalIgnoreCase);
@@ -220,6 +221,15 @@ public sealed class SensorHub : IAsyncDisposable
 
         var snapshot = SensorSnapshot.Create(timestamp, merged);
         var aliases = _resolver.Resolve(snapshot);
+        _peaks.Observe(Number(snapshot, aliases, WellKnownSensors.CpuTemperature), Number(snapshot, aliases, WellKnownSensors.GpuTemperature));
+        var peaks = _peaks.Readings();
+        if (peaks.Count > 0)
+        {
+            merged.AddRange(peaks);
+            snapshot = SensorSnapshot.Create(timestamp, merged);
+            aliases = _resolver.Resolve(snapshot);
+        }
+
         _history.RecordSnapshot(snapshot, aliases, timestamp);
 
         Volatile.Write(ref _aliases!, aliases);
@@ -252,6 +262,9 @@ public sealed class SensorHub : IAsyncDisposable
         {
         }
     }
+
+    private static double? Number(SensorSnapshot snapshot, IReadOnlyDictionary<string, SensorId> aliases, string alias) =>
+        aliases.TryGetValue(alias, out var id) && snapshot.TryGet(id, out var reading) ? reading.Value : null;
 
     private void Quarantine(ProviderState state, string sourceId, string reason)
     {

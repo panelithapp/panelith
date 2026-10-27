@@ -2,6 +2,12 @@
   "version": 2,
   "dependencies": {
     "net10.0": {
+      "Microsoft.Windows.SDK.NET.Ref": {
+        "type": "Direct",
+        "requested": "[10.0.17763.57, )",
+        "resolved": "10.0.17763.57",
+        "contentHash": "aSojmVec9hCaa2Erji9V9U4hfL8M3talphfSVXiTx5fYluyJ7iqYCZ//iqvhU2KWfH8upkFIucWe6XXbdKro4Q=="
+      },
       "BlackSharp.Core": {
         "type": "Transitive",
         "resolved": "1.0.7",

@@ -32,4 +32,8 @@ public sealed record ActivitySnapshot
 
     /// <summary>The GPU load in percent, if known.</summary>
     public double? GpuLoad { get; init; }
+
+    /// <summary>Numeric sensor values, keyed by alias, for sensor triggers.</summary>
+    public IReadOnlyDictionary<string, double> Sensors { get; init; } =
+        new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
 }

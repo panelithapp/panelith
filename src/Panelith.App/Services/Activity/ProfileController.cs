@@ -155,7 +155,8 @@ public sealed partial class ProfileController : ObservableObject, IDisposable
             var refreshLibraries = DateTime.UtcNow - _librariesFoundAt > LibraryRefresh;
             var gpuLoad = SensorNumber(WellKnownSensors.GpuLoad);
             var rtssProcess = RtssProcessId();
-            var (snapshot, libraries) = await Task.Run(() => (Snapshot(gpuLoad, rtssProcess), refreshLibraries ? GameLibraryLocator.Locate() : null));
+            var sensors = ReadSensors();
+            var (snapshot, libraries) = await Task.Run(() => (Snapshot(gpuLoad, rtssProcess, sensors), refreshLibraries ? GameLibraryLocator.Locate() : null));
             if (libraries is not null)
             {
                 _librariesFoundAt = DateTime.UtcNow;
@@ -178,7 +179,7 @@ public sealed partial class ProfileController : ObservableObject, IDisposable
         }
     }
 
-    private ActivitySnapshot Snapshot(double? gpuLoad, int? rtssProcess)
+    private ActivitySnapshot Snapshot(double? gpuLoad, int? rtssProcess, IReadOnlyDictionary<string, double> sensors)
     {
         var processes = _processes.Snapshot();
         var (foregroundId, fullscreen) = ForegroundProbe.Read();
@@ -192,7 +193,24 @@ public sealed partial class ProfileController : ObservableObject, IDisposable
             Locked = IdleProbe.IsLocked(),
             RtssProcessId = rtssProcess,
             GpuLoad = gpuLoad,
+            Sensors = sensors,
         };
+    }
+
+    private Dictionary<string, double> ReadSensors()
+    {
+        var values = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        var hub = _service.Runtime.Sensors;
+        var snapshot = hub.Current;
+        foreach (var (alias, id) in hub.Aliases)
+        {
+            if (snapshot.TryGet(id, out var reading) && reading.Value is { } value && !double.IsNaN(value))
+            {
+                values[alias] = value;
+            }
+        }
+
+        return values;
     }
 
     private void Evaluate(ActivitySnapshot snapshot)

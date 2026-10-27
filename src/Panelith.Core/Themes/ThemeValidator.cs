@@ -406,7 +406,7 @@ public static class ThemeValidator
                         widget.Id,
                         $"{path}.source"));
                 }
-                else if (checkAssets)
+                else if (checkAssets && !string.Equals(image.Source, MediaArt.Source, StringComparison.OrdinalIgnoreCase))
                 {
                     CheckAsset(theme, image.Source, $"{path}.source", widget.Id, diagnostics);
                 }

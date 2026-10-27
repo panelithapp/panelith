@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Panelith.Engine;
 using Panelith.Engine.Configuration;
 using Panelith.Hosting;
+using Panelith.Sensors;
 
 namespace Panelith.App.Services;
 
@@ -79,6 +80,33 @@ public sealed class PanelithService : IAsyncDisposable
     {
         Renderers.Show(screenId);
         Persist(Options with { Defaults = Options.Defaults with { Theme = screenId } });
+    }
+
+    /// <summary>
+    /// Pins a theme name to one raw sensor, or clears the pin when
+    /// <paramref name="sensorId"/> is null so the automatic choice comes back.
+    /// </summary>
+    public void SetAliasOverride(string alias, string? sensorId)
+    {
+        var map = new Dictionary<string, string>(
+            Options.Sensors.AliasOverrides ?? new Dictionary<string, string>(),
+            StringComparer.OrdinalIgnoreCase);
+        if (string.IsNullOrWhiteSpace(sensorId))
+        {
+            map.Remove(alias);
+            Runtime.Sensors.Resolver.ClearOverride(alias);
+        }
+        else if (SensorId.TryParse(sensorId, out var id))
+        {
+            map[alias] = id.Value;
+            Runtime.Sensors.Resolver.SetOverride(alias, id);
+        }
+        else
+        {
+            return;
+        }
+
+        Persist(Options with { Sensors = Options.Sensors with { AliasOverrides = map.Count == 0 ? null : map } });
     }
 
     /// <summary>Changes panel settings that need the connection reopened, such as frame rate.</summary>

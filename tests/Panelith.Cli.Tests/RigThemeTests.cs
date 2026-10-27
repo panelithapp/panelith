@@ -62,6 +62,7 @@ public sealed class RigThemeTests
     [InlineData("desk")]
     [InlineData("clock")]
     [InlineData("night")]
+    [InlineData("now-playing")]
     public async Task EveryBundledScreenValidatesAndRenders(string id)
     {
         var library = new ThemeLibrary(new AppPaths(Path.GetTempPath()));

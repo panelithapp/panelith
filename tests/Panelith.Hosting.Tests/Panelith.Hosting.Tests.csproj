@@ -8,4 +8,8 @@
     <ProjectReference Include="../../src/Panelith.Hosting/Panelith.Hosting.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition="!$([MSBuild]::IsOSPlatform('Windows'))">
+    <Compile Remove="WindowsSensorSourceTests.cs" />
+  </ItemGroup>
+
 </Project>

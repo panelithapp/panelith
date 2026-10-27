@@ -72,7 +72,7 @@ Every widget has:
 
 ### text
 
-`text` is the text to draw, with values in braces: `"CPU {@cpu.temp:0}°"`. Also: `fontFamily`, `fontSize`, `fontWeight` (100 to 900), `italic`, `color`, `align` (`left`, `center`, `right`), `verticalAlign` (`top`, `middle`, `bottom`, `baseline`), `letterSpacing`, `lineHeight`, `wrap`, `shrinkToFit` (on by default), `strokeColor` and `strokeWidth` for an outline, and `tabularNumbers` and `stabilizeWidth` (both on by default) so numbers do not jitter as digits change.
+`text` is the text to draw, with values in braces: `"CPU {@cpu.temp:0}°"`. Also: `fontFamily`, `fontSize`, `fontWeight` (100 to 900), `italic`, `color`, `align` (`left`, `center`, `right`), `verticalAlign` (`top`, `middle`, `bottom`, `baseline`), `letterSpacing`, `lineHeight`, `wrap`, `shrinkToFit` (on by default), `scroll` (slides a line that is wider than its box, and turns shrink-to-fit off for that line), `strokeColor` and `strokeWidth` for an outline, and `tabularNumbers` and `stabilizeWidth` (both on by default) so numbers do not jitter as digits change.
 
 `colorStops` changes the colour with a value: `[{ "at": 0, "color": "#3ee0c5" }, { "at": 80, "color": "#ff5d73" }]`. The highest `at` not above the value wins. `colorBinding` sets which value; by default the first sensor in `text`.
 
@@ -90,7 +90,7 @@ Every widget has:
 
 ### image
 
-`source` (relative to the screen folder; PNG, JPEG, BMP, WebP or GIF), `fit`, `tint`, and `animationSpeed` for animated GIFs (`0` freezes the first frame).
+`source` (relative to the screen folder; PNG, JPEG, BMP, WebP or GIF), `fit`, `tint`, and `animationSpeed` for animated GIFs (`0` freezes the first frame). The special source `@media.art` draws the album art of whatever is playing, and draws nothing when there is no picture.
 
 ### video
 

@@ -220,6 +220,15 @@
                     <TextBlock Text="Any one of these brings the profile up. Leave them all empty for a profile you only pick by hand." Classes="muted" FontSize="12" TextWrapping="Wrap" />
                   </StackPanel>
 
+                  <StackPanel Spacing="6">
+                    <TextBlock Text="A sensor crosses a line" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding Sensor}" PlaceholderText="@gpu.temp &gt; 85    or    @cpu.fan &lt; 100" />
+                    <TextBlock Classes="muted" FontSize="12" TextWrapping="Wrap"
+                               Text="Checked before games and programs, so put a warning profile above Gaming if it should interrupt a game. A sensor this PC does not have does not match." />
+                    <TextBlock Text="{Binding SensorError}" Foreground="{StaticResource WarnBrush}" FontSize="12"
+                               IsVisible="{Binding SensorError, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                  </StackPanel>
+
                   <!-- Games -->
                   <StackPanel Spacing="8">
                     <CheckBox IsChecked="{Binding DetectGames}">

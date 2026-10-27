@@ -23,7 +23,7 @@
 
 Small USB screens have become a popular way to show CPU and GPU temperatures inside a PC case. The software that comes with them tends to be closed, Windows-only, and tied to one brand. Panelith is a replacement: one app that draws a screen you choose, or one you design, on the panel, and keeps it live with your machine's real sensors.
 
-- **Thirteen ready-made screens** for gaming, streaming, work and night time, each designed for the 1920×480 and 1280×480 Trofeo sizes.
+- **Fourteen ready-made screens** for gaming, streaming, work, what is playing, and night time, each designed for the 1920×480 and 1280×480 Trofeo sizes.
 - **A designer** for making your own: drag gauges, bars, graphs, text, pictures and videos onto a live canvas.
 - **Video screens and wallpapers** from your own videos or a YouTube link, prepared once so playback costs almost nothing.
 - **Profiles** that switch the panel by themselves: a game screen when a game starts, a clock when you step away, a dim night screen on a schedule.

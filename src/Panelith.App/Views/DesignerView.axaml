@@ -90,6 +90,20 @@
                 </DataTemplate>
               </ListBox.ItemTemplate>
             </ListBox>
+            <TextBlock Classes="muted" FontSize="11" Text="Ctrl-click the canvas to select more than one." />
+            <WrapPanel Orientation="Horizontal">
+              <Button Classes="ghost small" Content="Left" Command="{Binding AlignCommand}" CommandParameter="Left" ToolTip.Tip="Line the left edges up" />
+              <Button Classes="ghost small" Content="Centre" Command="{Binding AlignCommand}" CommandParameter="Center" />
+              <Button Classes="ghost small" Content="Right" Command="{Binding AlignCommand}" CommandParameter="Right" />
+              <Button Classes="ghost small" Content="Top" Command="{Binding AlignCommand}" CommandParameter="Top" />
+              <Button Classes="ghost small" Content="Middle" Command="{Binding AlignCommand}" CommandParameter="Middle" />
+              <Button Classes="ghost small" Content="Bottom" Command="{Binding AlignCommand}" CommandParameter="Bottom" />
+              <Button Classes="ghost small" Content="Space across" Command="{Binding DistributeCommand}" CommandParameter="x" ToolTip.Tip="Even gaps between three or more" />
+              <Button Classes="ghost small" Content="Space down" Command="{Binding DistributeCommand}" CommandParameter="y" />
+              <Button Classes="ghost small" Content="Same width" Command="{Binding MatchSizeCommand}" CommandParameter="width" ToolTip.Tip="Match the widget whose properties are showing" />
+              <Button Classes="ghost small" Content="Same height" Command="{Binding MatchSizeCommand}" CommandParameter="height" />
+              <Button Classes="ghost small" Content="Same size" Command="{Binding MatchSizeCommand}" CommandParameter="both" />
+            </WrapPanel>
           </StackPanel>
         </Border>
 

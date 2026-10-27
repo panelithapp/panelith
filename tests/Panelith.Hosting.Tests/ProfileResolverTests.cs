@@ -236,4 +236,67 @@ public sealed class ProfileResolverTests
         Assert.False(ProfileResolver.Matches("app.v2(*", process));
         Assert.False(ProfileResolver.Matches(@"C:\app.v2.exe", process));
     }
+
+    [Fact]
+    public void AHotGpuBringsUpAWarningProfileAheadOfAGame()
+    {
+        var set = DefaultProfiles.Create();
+        var warning = new Profile
+        {
+            Id = "hot",
+            Name = "Hot",
+            Screens = ["clock"],
+            Triggers = new ProfileTriggers { Sensor = "@gpu.temp > 85" },
+        };
+        set = set with { Profiles = [warning, .. set.Profiles] };
+        var snapshot = At(Afternoon, Doom) with
+        {
+            Sensors = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase) { ["@gpu.temp"] = 90 },
+        };
+
+        var decision = NewResolver().Resolve(set, snapshot)!;
+
+        Assert.Equal("hot", decision.Profile.Id);
+        Assert.Equal(ProfileTrigger.Sensor, decision.Trigger);
+    }
+
+    [Fact]
+    public void AMissingSensorDoesNotMatchSoTheGameStillWins()
+    {
+        var set = DefaultProfiles.Create();
+        var warning = new Profile
+        {
+            Id = "hot",
+            Name = "Hot",
+            Screens = ["clock"],
+            Triggers = new ProfileTriggers { Sensor = "@gpu.temp > 85" },
+        };
+        set = set with { Profiles = [warning, .. set.Profiles] };
+
+        var decision = NewResolver().Resolve(set, At(Afternoon, Doom))!;
+
+        Assert.Equal("gaming", decision.Profile.Id);
+    }
+
+    [Fact]
+    public void AStoppedFanMatches()
+    {
+        var profile = new Profile
+        {
+            Id = "fan",
+            Name = "Fan",
+            IsDefault = true,
+            Triggers = new ProfileTriggers { Sensor = "@cpu.fan < 100" },
+        };
+        var set = new ProfileSet { Profiles = [profile] };
+        var snapshot = At(Afternoon) with
+        {
+            Sensors = new Dictionary<string, double> { ["@cpu.fan"] = 0 },
+        };
+
+        var decision = NewResolver().Resolve(set, snapshot)!;
+
+        Assert.Equal(ProfileTrigger.Sensor, decision.Trigger);
+        Assert.False(ProfileResolver.SensorIsTrue("@cpu.fan < 100", new Dictionary<string, double>()));
+    }
 }

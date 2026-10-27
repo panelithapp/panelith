@@ -306,6 +306,7 @@
           "Panelith.Devices": "[0.1.4, )",
           "Panelith.Engine": "[0.1.4, )",
           "Panelith.Monitoring": "[0.1.4, )",
+          "Panelith.Platform.Windows": "[0.1.4, )",
           "Panelith.Rendering": "[0.1.4, )"
         }
       },
@@ -316,6 +317,9 @@
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )",
           "Panelith.Core": "[0.1.4, )"
         }
+      },
+      "panelith.platform.windows": {
+        "type": "Project"
       },
       "panelith.rendering": {
         "type": "Project",

@@ -4,6 +4,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Panelith.App.Services.Activity;
+using Panelith.Expressions;
 using Panelith.Hosting.Profiles;
 
 namespace Panelith.App.ViewModels;
@@ -178,6 +179,13 @@ public sealed partial class ProfileEditorViewModel : ObservableObject
     [ObservableProperty]
     public partial bool OnLock { get; set; }
 
+    /// <summary>Expression that brings this profile up, such as <c>@gpu.temp &gt; 85</c>.</summary>
+    [ObservableProperty]
+    public partial string Sensor { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string? SensorError { get; set; }
+
     [ObservableProperty]
     public partial string Hotkey { get; set; } = string.Empty;
 
@@ -224,6 +232,20 @@ public sealed partial class ProfileEditorViewModel : ObservableObject
         {
             AddApp(value);
             SuggestedAppToAdd = null;
+        }
+    }
+
+    partial void OnSensorChanged(string value)
+    {
+        var text = value.Trim();
+        SensorError = text.Length == 0
+            ? null
+            : text.Length > 240
+                ? "Keep the condition under 240 characters."
+                : BindingExpression.TryParse(text, out _, out var error) ? null : error;
+        if (SensorError is null)
+        {
+            Commit();
         }
     }
 
@@ -381,6 +403,7 @@ public sealed partial class ProfileEditorViewModel : ObservableObject
         IdleEnabled = profile.Triggers.IdleMinutes is not null;
         IdleMinutes = profile.Triggers.IdleMinutes ?? 5;
         OnLock = profile.Triggers.OnLock;
+        Sensor = profile.Triggers.Sensor ?? string.Empty;
         Hotkey = profile.Triggers.Hotkey ?? string.Empty;
         DimPercent = (int)Math.Round(profile.Dim * 100);
         FrameRateOverride = profile.FramesPerSecond is not null;
@@ -439,6 +462,7 @@ public sealed partial class ProfileEditorViewModel : ObservableObject
                 DetectFullscreen = DetectFullscreen,
                 IdleMinutes = IdleEnabled ? Math.Clamp(IdleMinutes, 1, 240) : null,
                 OnLock = OnLock,
+                Sensor = SensorError is null && Sensor.Trim().Length > 0 ? Sensor.Trim() : null,
                 Schedules = [.. Schedules.Select(s => s.ToWindow())],
                 Hotkey = HotkeyError is null && Hotkey.Length > 0 ? Services.Activity.Hotkey.TryParse(Hotkey)?.Text : null,
             },

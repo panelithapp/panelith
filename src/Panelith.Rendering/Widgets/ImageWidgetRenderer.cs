@@ -1,4 +1,5 @@
 using Panelith.Expressions;
+using Panelith.Sensors;
 using Panelith.Themes;
 using SkiaSharp;
 
@@ -22,6 +23,12 @@ internal static class ImageWidgetRenderer
         }
 
         var source = ResolveSource(widget.Source, ctx);
+        if (string.Equals(source, MediaArt.Source, StringComparison.OrdinalIgnoreCase))
+        {
+            DrawAlbumArt(rect, widget, ctx);
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(source))
         {
             ctx.DrawErrorMarker(rect);
@@ -50,6 +57,58 @@ internal static class ImageWidgetRenderer
 
         var bitmap = ctx.Assets.GetBitmap(source);
         ImageFitHelper.Draw(ctx.Canvas, bitmap, dest, widget.Fit, paint);
+        paint.ColorFilter = null;
+    }
+
+    private static SKBitmap? _album;
+    private static long _albumStamp = -1;
+
+    private static void DrawAlbumArt(ThemeRect rect, ImageWidget widget, WidgetRenderContext ctx)
+    {
+        var path = MediaArt.FilePath;
+        if (path is null || !File.Exists(path))
+        {
+            return;
+        }
+
+        long stamp;
+        try
+        {
+            stamp = File.GetLastWriteTimeUtc(path).Ticks;
+        }
+        catch (IOException)
+        {
+            return;
+        }
+
+        if (_album is null || stamp != _albumStamp)
+        {
+            _album?.Dispose();
+            _album = null;
+            try
+            {
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                _album = SKBitmap.Decode(stream);
+                _albumStamp = stamp;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                return;
+            }
+        }
+
+        if (_album is null)
+        {
+            return;
+        }
+
+        var dest = new SKRect((float)rect.X, (float)rect.Y, (float)rect.Right, (float)rect.Bottom);
+        var paint = ctx.Paints.Image;
+        paint.Color = SKColors.White.WithOpacity(ctx.Opacity);
+        paint.ColorFilter = widget.Tint is not null && ThemeColor.TryParse(widget.Tint, out var tint)
+            ? SKColorFilter.CreateBlendMode(tint.ToSk(), SKBlendMode.Modulate)
+            : null;
+        ImageFitHelper.Draw(ctx.Canvas, _album, dest, widget.Fit, paint);
         paint.ColorFilter = null;
     }
 
