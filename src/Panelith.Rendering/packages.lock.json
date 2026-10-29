@@ -21,6 +21,12 @@
           "SkiaSharp.NativeAssets.macOS": "4.153.1"
         }
       },
+      "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+        "type": "Direct",
+        "requested": "[4.154.0, )",
+        "resolved": "4.154.0",
+        "contentHash": "U6HQ/n+wQ09WyXQB6PK1l46BIrHqTN/dImV84pti3mLxnlOdcSASPQzJwzuZmEgiCbriLtu5fP0t9cdzpFPHsw=="
+      },
       "panelith.core": {
         "type": "Project",
         "dependencies": {
@@ -47,6 +53,12 @@
       }
     },
     "net10.0/win-x64": {
+      "SkiaSharp.NativeAssets.Linux.NoDependencies": {
+        "type": "Direct",
+        "requested": "[4.154.0, )",
+        "resolved": "4.154.0",
+        "contentHash": "U6HQ/n+wQ09WyXQB6PK1l46BIrHqTN/dImV84pti3mLxnlOdcSASPQzJwzuZmEgiCbriLtu5fP0t9cdzpFPHsw=="
+      },
       "SkiaSharp.NativeAssets.macOS": {
         "type": "CentralTransitive",
         "requested": "[4.153.1, )",
